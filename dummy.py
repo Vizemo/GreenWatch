@@ -8,14 +8,16 @@ import datetime
 import random
 import socket
 import subprocess
+import math
 
 roomID = 1
 # ServerIP='138.197.101.211'
 ServerIP='127.0.0.1'
 server_data = None
 duration = 3
+start_time = time()
 # private_key = 'FKLVPN17IC4JPB6NPJE0MSM4ISHQRF0EQ2MNRFLEGRP3PP7HMP649SWU1PDU'
-private_key = 'NVTCVAG5F3XFEUZE2T28BGUBBA0S8NOFG7WII8E94M9UIYC6617M5E8AT1PX'
+private_key = 'SVV708ABSK9EN3DMNAH9CFV1MCQ76UNUE6T9MKE0S3QRAU514QL1SORMK1V0'
 
 req_headers = {
     "Key": private_key
@@ -23,6 +25,7 @@ req_headers = {
 
 server_url = f"http://{ServerIP}:5000/rooms/{roomID}/measurement"
 action_url = f"http://{ServerIP}:5000/rooms/{roomID}/action"
+agent_url = f"http://{ServerIP}:5000/servers/agents/{roomID}"
 
 # Actions.
 last_action_timestamp = ''
@@ -345,8 +348,11 @@ def take_measurements(simulated=True):
     Takes measurements and returns data
     """
     if simulated:
+        global start_time
         # Temperature
-        temp = round(random.random() * 2.0 + 22, 2)
+        # temp = round(random.random() * 2.0 + 22, 2)
+        elapsed_time_minutes = (time() - start_time) / 60
+        temp = round(1 * math.sin(math.pi * elapsed_time_minutes / 3) + 25, 2) # 3 min period
         # Humidity
         hum = round(random.random() * 10 + 35, 2)
         # Light
@@ -382,6 +388,9 @@ if __name__ == "__main__":
 
     # Get host name and ip address
     host_name, host_IP = get_hostname_IP()
+
+    patch_response = requests.patch(agent_url, headers=req_headers, json={'device_ip_address': host_IP})
+    print(patch_response.text)
 
     while True:
         print("****************************\n")

@@ -6,6 +6,8 @@ const room_grid = document.getElementById('room-grid');
 const main = document.createElement('main');
 room_grid.append(main);
 
+// Function: hideSettings()
+// Hides the settings if use isn't an admin
 function hideSettings() {
   const jwt = Utils.getJwt();
   const token = Utils.parseJwt(JSON.stringify(jwt));
@@ -17,11 +19,43 @@ function hideSettings() {
     settingsDropstart.style.visibility = "hidden";
   }
 }
-
+//Calling hideSettings functions
 hideSettings();
 
+//Grabs the logout-link anchor tag 
 const logoutLink = document.getElementById('logout-link');
-logoutLink.addEventListener('click', Utils.logout);
+//when clicked use logout method from Utils
+logoutLink.addEventListener('click', Utils.logout); 
+
+/* Dark Mode Logic */
+// Wait for the DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', (event) => {
+  const darkModeSwitch = document.getElementById('darkModeSwitch');
+
+  // Check if the user has a preference stored in localStorage
+  const isDarkMode = localStorage.getItem('darkMode') === "true";
+
+  // Apply the stored preference
+  darkModeSwitch.checked = isDarkMode;
+  if (isDarkMode) {
+    document.body.classList.add('dark-mode');
+  }
+
+  // Listen for changes to the toggle switch
+  darkModeSwitch.addEventListener('change', () => {
+    if (darkModeSwitch.checked) {
+      // Activate dark mode and store the preference
+      document.body.classList.add('dark-mode');
+      localStorage.setItem('darkMode', 'true');
+    } else {
+      // Deactivate dark mode and store the preference
+      document.body.classList.remove('dark-mode');
+      localStorage.setItem('darkMode', 'false');
+    }
+    renderRoomCards();
+  });
+});
+
 
 function resetRoomsList() {
   while(main.firstChild) {
@@ -35,58 +69,96 @@ export async function renderRoomCards() {
   const rooms = await proxy.getRooms();
   const agents = await proxy.getAgents();
 
+  const isDarkMode = localStorage.getItem('darkMode');
+  // console.log(`[DARK MODE] ${isDarkMode}`)
+
   const vent_states = ['Open', 'Closed', 'Pending']
   const shade_states = ['Open', 'Closed', 'Pending']
   // console.log(rooms);
 
   // forEach room, in rooms, create a card and append it to main.
   // Also set the information for the card.
-
   if (rooms.length) {
     rooms.forEach(room => {
-      const card = document.createElement('div');
+      const room_id = room['id'];
+      const card = document.createElement('div'); 
       const card_header = document.createElement('div');
+      const roomAlive = document.createElement('button');
       const card_body = document.createElement('div');    // Needs to containt multiple rows
       const roomName = document.createElement('h2');
       
       card.setAttribute('class', 'room-card');
-      card.setAttribute('id', `${room['id']}`)
+      card.setAttribute('id', `${room_id}`);
+
+      roomAlive.setAttribute('class', 'btn btn-primary alive-button-off');
+      roomAlive.innerHTML = Utils.powerButton;
+      // roomAlive.setAttribute('class','alive-button');
+      roomAlive.setAttribute('id',`alive-button${room_id}`);
+
+      toggleRoomAlive(roomAlive, room_id);
+      roomAlive.addEventListener('click', async function(event) {
+        // Prevent the event from propagating to the card
+        event.stopPropagation();
+        roomAlive.classList.remove('alive-button-on')
+        toggleRoomAlive(roomAlive, room_id);
+      })
+      
+      // roomAlive.setAttribute('style', 'color: green');
       card_header.setAttribute('class', 'card-header');
       card_body.setAttribute('class', 'row');
       roomName.setAttribute('class', 'display-3');
       roomName.setAttribute('style', 'color: grey');
-      
+            
       // Get agent 
       let agent_ip = " [...]";
         agents.forEach(agent => {
-          if (room['id'] == agent['room_id'])
+          if (room_id == agent['room_id'])
             {
-              agent_ip = ` [${agent['ip_address']}]`
-              roomName.setAttribute('style', 'color: black')
+              agent_ip = ` [${agent['device_ip_address']}]`;
+            }
+            if (isDarkMode == 'true'){
+              roomName.setAttribute('style', 'color: white');
+            } else {
+              roomName.setAttribute('style', 'color: black');
             }
         })
 
       roomName.textContent = room["name"] + agent_ip;
 
-      async function getLastAction(room){
+      async function getLastAction(room_id){
       // Get last action
-      const lastAction = await proxy.getLastActionByRoomID(room['id']);
+      const lastAction = await proxy.getLastActionByRoomID(room_id);
       return lastAction;
       }
 
-      // DEBUG: Test 'pinging'
-      getLastAction(room).then(response => {
-        console.log(`Room ID ${room['id']} Acknowledged: ${response['ack']}`);
-      })
+      // // DEBUG: Test 'pinging'
+      // getLastAction(room).then(response => {
+      //   console.log(`Room ID ${room['id']} Acknowledged: ${response['ack']}`);
+      // })
 
       // Main buttons
       // Create a button element
       const m_button_row = document.createElement('div');
       const start_button = document.createElement('button');
       const stop_button = document.createElement('button');
+      const download_button = document.createElement('button');
 
-      start_button.setAttribute('id', `start_button${room['id']}`);
-      stop_button.setAttribute('id', `stop_button${room['id']}`);
+      download_button.setAttribute("class", "btn btn-success");
+      download_button.innerHTML =`<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"></path>
+        <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"></path>
+      </svg> Data`
+
+      start_button.setAttribute('id', `start_button${room_id}`);
+      stop_button.setAttribute('id', `stop_button${room_id}`);
+      
+      if (isDarkMode == 'true'){
+        start_button.setAttribute('class', `btn btn-outline-light`);
+        stop_button.setAttribute('class', `btn btn-outline-light`);
+      } else {
+        start_button.setAttribute('class', `btn btn-outline-dark`);
+        stop_button.setAttribute('class', `btn btn-outline-dark`);
+      }
 
       start_button.textContent = "Start Logging";
       // Add an event listener for the click event to refresh the page
@@ -97,15 +169,16 @@ export async function renderRoomCards() {
         
         // Prevent the event from propagating to the card
         event.stopPropagation();
-        
-        const roomID = room['id'];
 
         // Get last action
-        const lastAction = await proxy.getLastActionByRoomID(roomID);
+        const lastAction = await proxy.getLastActionByRoomID(room_id);
         // console.log(lastAction['stop']);
 
+        console.log(`Room ID ${roomID} Acknowledged: ${lastAction['ack']}`);
+
+
         // DEBUG: Test 'pinging'
-        console.log(`Room ID ${room['id']} Acknowledged: ${lastAction['ack']}`);
+        // console.log(`Room ID ${room['id']} Acknowledged: ${lastAction['ack']}`);
         
         // Create action object
         const actionObj = getCreateActionObject(
@@ -122,15 +195,15 @@ export async function renderRoomCards() {
         const userID = jwt['user_id'];
 
         // Create action in database
-        await proxy.createAction(roomID, actionObj);
+        await proxy.createAction(room_id, actionObj);
 
         // Post message in notes
-        const message = `[MEASUREMENT] Started logging in room ${roomID}`; 
-        await proxy.createRoomMessage(roomID, userID, message);
-        console.log("[SUCCESS] Started logging in room: " + roomID);
+        const message = `[MEASUREMENT] Started logging in room ${room_id}`; 
+        await proxy.createRoomMessage(room_id, userID, message);
+        // console.log("[SUCCESS] Started logging in room: " + room_id);
         
         renderRoomValues();
-        console.log("[TEST] Reloading Cards...");
+        // console.log("[TEST] Reloading Cards...");
         });
 
       stop_button.textContent = "Stop Logging";
@@ -144,14 +217,13 @@ export async function renderRoomCards() {
         // Prevent the event from propagating to the card
         event.stopPropagation();
         
-        const roomID = room['id'];
-
         // Get last action
-        const lastAction = await proxy.getLastActionByRoomID(roomID);
+        const lastAction = await proxy.getLastActionByRoomID(room_id);
         // console.log(lastAction['stop']);
 
         // Create action object
         const actionObj = getCreateActionObject(
+          0,
           0,
           1,
           lastAction['vent_state'],
@@ -164,20 +236,31 @@ export async function renderRoomCards() {
         const userID = jwt['user_id'];
 
         // Create action in database
-        await proxy.createAction(roomID, actionObj);
+        await proxy.createAction(room_id, actionObj);
 
         // Post message in notes
-        const message = `[MEASUREMENT] Stopped logging in room ${roomID}`; 
-        await proxy.createRoomMessage(roomID, userID, message);
-        console.log("[SUCCESS] Stopped logging in room: " + roomID);
+        const message = `[MEASUREMENT] Stopped logging in room ${room_id}`; 
+        await proxy.createRoomMessage(room_id, userID, message);
+        // console.log("[SUCCESS] Stopped logging in room: " + room_id);
 
         // Refresh cards
         renderRoomValues();
-        console.log("[TEST] Reloading Cards...");
+        // console.log("[TEST] Reloading Cards...");
         });
+
+      download_button.addEventListener('click', async function(event)
+        {
+          // Prevent the event from propagating to the card
+          event.stopPropagation();
+          
+          redirectToDownloadCSV(server_ip, room_id);
+        }
+      )
+
         
       m_button_row.append(start_button);
       m_button_row.append(stop_button);
+      m_button_row.append(download_button);
       card_body.append(m_button_row);
       
       const status_row = document.createElement('div');
@@ -187,11 +270,11 @@ export async function renderRoomCards() {
       status_label.setAttribute('class', 'h1');
       status_label.textContent = "Status: ";
       status_value.setAttribute('class', 'h1');
-      status_value.setAttribute('id', `status_value${room['id']}`)
+      status_value.setAttribute('id', `status_value${room_id}`)
       status_value.textContent = `...`;
       
       let isStopped = -1;
-      getLastAction(room).then(response => {
+      getLastAction(room_id).then(response => {
         isStopped = response['stop'];
         // console.log(`isStopped: ${isStopped}`)
         if (isStopped == 0){
@@ -289,7 +372,7 @@ export async function renderRoomCards() {
         vent_label.textContent = "Vent State:";
         vent_value.setAttribute('class', 'h2');
         vent_value.setAttribute('style', 'color: green');
-        vent_value.setAttribute('id',`vent_value${room['id']}`)
+        vent_value.setAttribute('id',`vent_value${room_id}`)
 
         
         shade_row.setAttribute('class', 'd-flex justify-content-between');
@@ -298,9 +381,9 @@ export async function renderRoomCards() {
         shade_label.textContent = "Shade State:";
         shade_value.setAttribute('class', 'h2');
         shade_value.setAttribute('style', 'color: green');
-        shade_value.setAttribute('id', `shade_value${room['id']}`)
+        shade_value.setAttribute('id', `shade_value${room_id}`)
 
-        console.log("last action state: " + room['actions'][room['actions'].length-1]['status'])
+        // console.log("last action state: " + room['actions'][room['actions'].length-1]['status'])
         if (room['actions'][room['actions'].length-1]['status'] == 3)
         {
           if (room['actions'][room['actions'].length-1]['shade_state'] != null)
@@ -341,8 +424,18 @@ export async function renderRoomCards() {
       const vent_button = document.createElement('button');
       const shade_button = document.createElement('button');
 
-      vent_button.setAttribute('id', `vent_button${room['id']}`);
-      shade_button.setAttribute('id', `shade_button${room['id']}`);
+      vent_button.setAttribute('id', `vent_button${room_id}`);
+      vent_button.setAttribute('class', `btn btn-outline-light`);
+      shade_button.setAttribute('id', `shade_button${room_id}`);
+      shade_button.setAttribute('class', `btn btn-outline-light`);
+
+      if (isDarkMode == 'true'){
+        vent_button.setAttribute('class', `btn btn-outline-light`);
+        shade_button.setAttribute('class', `btn btn-outline-light`);
+      } else {
+        vent_button.setAttribute('class', `btn btn-outline-dark`);
+        shade_button.setAttribute('class', `btn btn-outline-dark`);
+      }
 
       vent_button.textContent = "Toggle Vent";
       // Add an event listener for the click event to refresh the page
@@ -357,14 +450,13 @@ export async function renderRoomCards() {
         // Prevent the event from propagating to the card
         event.stopPropagation();
         
-        const roomID = room['id'];
-
         // Get last action
-        const lastAction = await proxy.getLastActionByRoomID(roomID);
+        const lastAction = await proxy.getLastActionByRoomID(room_id);
         // console.log(lastAction['vent_state']);
 
         // Create action object
         const actionObj = getCreateActionObject(
+          0,
           0,
           lastAction['stop'],
           ((lastAction['vent_state'] * -1) + 1),
@@ -377,17 +469,17 @@ export async function renderRoomCards() {
         const userID = jwt['user_id'];
 
         // Create action in database
-        await proxy.createAction(roomID, actionObj);
+        await proxy.createAction(room_id, actionObj);
 
         // Post message in notes
-        const message = `[ACTION] Changing vent in room ${roomID} to ${vent_states[actionObj['vent_state']]}`; 
-        await proxy.createRoomMessage(roomID, userID, message);
-        console.log("[SUCCESS] Created new action for room: " + roomID);
+        const message = `[ACTION] Changing vent in room ${room_id} to ${vent_states[actionObj['vent_state']]}`; 
+        await proxy.createRoomMessage(room_id, userID, message);
+        // console.log("[SUCCESS] Created new action for room: " + room_id);
         
         // Refresh cards
         // renderRoomCards();
         renderRoomValues();
-        console.log("[TEST] Reloading Cards...");
+        // console.log("[TEST] Reloading Cards...");
         });
 
       shade_button.textContent = "Toggle Shade";
@@ -402,11 +494,9 @@ export async function renderRoomCards() {
 
         // Prevent the event from propagating to the card
         event.stopPropagation();
-        
-        const roomID = room['id'];
 
         // Get last action
-        const lastAction = await proxy.getLastActionByRoomID(roomID);
+        const lastAction = await proxy.getLastActionByRoomID(room_id);
         // console.log(lastAction['shade_state']);
 
         // Create action object
@@ -423,16 +513,16 @@ export async function renderRoomCards() {
         const userID = jwt['user_id'];
 
         // Create action in database
-        await proxy.createAction(roomID, actionObj);
+        await proxy.createAction(room_id, actionObj);
 
         // Post message in notes
-        const message = `[ACTION] Changing shade in room ${roomID} to ${shade_states[actionObj['shade_state']]}`; 
-        await proxy.createRoomMessage(roomID, userID, message);
-        console.log("[SUCCESS] Created new action for room: " + roomID)
+        const message = `[ACTION] Changing shade in room ${room_id} to ${shade_states[actionObj['shade_state']]}`; 
+        await proxy.createRoomMessage(room_id, userID, message);
+        // console.log("[SUCCESS] Created new action for room: " + room_id)
 
         // Refresh cards
         renderRoomValues();
-        console.log("[TEST] Reloading Cards...");
+        // console.log("[TEST] Reloading Cards...");
 
         });    
         
@@ -440,7 +530,7 @@ export async function renderRoomCards() {
       button_row.append(shade_button);
       card_body.append(button_row);
   
-      
+      card_header.append(roomAlive);
       card_header.append(roomName);
       card.append(card_header);
       card.append(card_body);
@@ -448,8 +538,8 @@ export async function renderRoomCards() {
     
       card.addEventListener('click', () => {
         // console.log(card.getAttribute('id'));
-        sessionStorage.setItem('roomID', room['id']);
-        window.location.href = `/home/room/${room['id']}`;
+        sessionStorage.setItem('roomID', room_id);
+        window.location.href = `/home/room/${room_id}`;
       });
     });
   }else{
@@ -467,6 +557,8 @@ export async function renderRoomValues() {
 
   const rooms = await proxy.getRooms();
   const agents = await proxy.getAgents();
+
+  
 
   // const agent_response = await proxy.pingAgentByID(1); // TESTING: just for first agent
   // const agent_status = agent_response['success'];
@@ -486,8 +578,13 @@ export async function renderRoomValues() {
 
   if (rooms.length) {
     rooms.forEach(room => {
-      const room_card = document.getElementById(`${room['id']}`)
-      const roomName = room_card.getElementsByClassName('display-3')[0]
+      const room_id = room['id']
+      const room_card = document.getElementById(`${room['id']}`);
+      const roomName = room_card.getElementsByClassName('display-3')[0];
+
+      const roomAlive = document.getElementById(`alive-button${room_id}`);
+
+      toggleRoomAlive(roomAlive, room_id);
 
       // Get agent 
       // const agent = await proxy.getAgentByID(room['id'])
@@ -495,8 +592,7 @@ export async function renderRoomValues() {
         agents.forEach(agent => {
           if (room['id'] == agent['room_id'])
             {
-              agent_ip = ` [${agent['ip_address']}]`
-              roomName.setAttribute('style', 'color: black')
+              agent_ip = ` [${agent['device_ip_address']}]`
             }
         })
 
@@ -506,7 +602,7 @@ export async function renderRoomValues() {
       //   roomName.setAttribute('style', 'color: grey')
       // }
 
-      const status_value = document.getElementById(`status_value${room['id']}`);
+      const status_value = document.getElementById(`status_value${room_id}`);
       const isStopped = `${room['actions'][room['actions'].length-1]['stop']}`;
       
       if (isStopped == 0){
@@ -521,15 +617,13 @@ export async function renderRoomValues() {
         status_value.setAttribute('style', 'color: grey');
       }
       
-
-
       if (room['measurements'].length) {
         // Need a label, value, and row for each
 
-        const t_value = document.getElementById(`t_value${room['id']}`)
-        const h_value = document.getElementById(`h_value${room['id']}`)
-        const p_value = document.getElementById(`p_value${room['id']}`)
-        const l_value = document.getElementById(`l_value${room['id']}`)
+        const t_value = document.getElementById(`t_value${room_id}`)
+        const h_value = document.getElementById(`h_value${room_id}`)
+        const p_value = document.getElementById(`p_value${room_id}`)
+        const l_value = document.getElementById(`l_value${room_id}`)
 
         t_value.textContent = `${room['measurements'][room['measurements'].length-1]['temperature']}`;
         h_value.textContent = `${room['measurements'][room['measurements'].length-1]['humidity']}`;
@@ -539,10 +633,10 @@ export async function renderRoomValues() {
 
       if (room['actions'].length) {
         // Need a label, value, and row for each
-        const vent_value = document.getElementById(`vent_value${room['id']}`)
-        const shade_value = document.getElementById(`shade_value${room['id']}`);
-        const vent_button = document.getElementById(`vent_button${room['id']}`);
-        const shade_button= document.getElementById(`shade_button${room['id']}`);
+        const vent_value = document.getElementById(`vent_value${room_id}`)
+        const shade_value = document.getElementById(`shade_value${room_id}`);
+        const vent_button = document.getElementById(`vent_button${room_id}`);
+        const shade_button= document.getElementById(`shade_button${room_id}`);
 
         vent_value.setAttribute('style', 'color: green');
         shade_value.setAttribute('style', 'color: green');
@@ -568,7 +662,6 @@ export async function renderRoomValues() {
           shade_value.setAttribute('style', 'color: red');
           vent_button.disabled = true;
           vent_button.textContent = "Disabled"
-          
           
           vent_value.textContent = "Pending";
           vent_value.setAttribute('style', 'color: red');
@@ -606,10 +699,10 @@ function renderNewRoomCard() {
   main.append(card);
 }
 
-function getCreateActionObject(status, stop, vent_state, shade_state, reboot) {
+function getCreateActionObject(ack, status, stop, vent_state, shade_state, reboot) {
 
   const action = {
-      "ack": 0,
+      "ack": ack,
       "status": status,
       "stop": stop,
       "vent_state": vent_state,
@@ -633,7 +726,7 @@ function getCreateServerObject(ip_address) {
 async function createFirstServer(local) {
   // Get server info and create new server if none exists,
   // returns ip address of this first server
-  const servers = await proxy.getServers()
+  const servers = await proxy.getServers();
   let server_ip = '';
 
   if (servers.length == 0) { // No servers
@@ -665,6 +758,59 @@ function displayServerIPAddress(server_ip) {
   serverIPText.href = `http://${server_ip}:5000/servers`;
 }
 
+async function sendAckRequest(room_id) {
+  // Send acknowledgment request to agent
+  const lastAction = await proxy.getLastActionByRoomID(room_id)
+  const action = getCreateActionObject(
+    1,
+    0,
+    lastAction['stop'],
+    lastAction['vent_state'],
+    lastAction['shade_state'],
+    lastAction['reboot']
+  );
+  const response = await proxy.createAction(room_id, action);
+}
+
+async function checkAckResponse(room_id) {
+  // Checks status of acknowledgement request sent to agent
+  const lastAction = await proxy.getLastActionByRoomID(room_id);
+  if (lastAction['status'] == 3){
+    console.log(`Room ID ${room_id} Acknowledged: ${lastAction['ack']}`);
+    return lastAction['ack'];
+  } else {
+    console.log(`Room ID ${room_id} Acknowledged: ${0}`);
+    return 0;
+  }
+}
+
+// Wait for `delay` milliseconds
+const sleepNow = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+
+async function checkRoomAlive(room_id){
+  await sendAckRequest(room_id);
+  await sleepNow(3000)
+  const response = await checkAckResponse(room_id);
+
+  // console.log("ACKNOWLEDGE RESPONSE: " + response);
+  return response;
+}
+
+// Function to redirect to a relative URL
+function redirectToDownloadCSV(server_ip, room_id) 
+{
+  let absoluteURL = 
+    `http://${server_ip}:5000/rooms/${room_id}/measurement/csv`;
+
+  absoluteURL = new URL(absoluteURL);
+
+  // Log the absolute URL (optional)
+  console.log('Redirecting to:', absoluteURL.href);
+
+  // Redirect to the absolute URL
+  window.location.href = absoluteURL.href;
+}
+
 // Create first server
 const server_ip = await createFirstServer(true);
 
@@ -672,10 +818,32 @@ const server_ip = await createFirstServer(true);
 displayServerIPAddress(server_ip);
 
 // Render all room cards
-renderRoomCards();
+await renderRoomCards();
 
 // Start the interval to update room values within room cars
-let intervalId = setInterval(renderRoomValues, 10000);
+let intervalId = setInterval(renderRoomValues, 8000);
+
+// Check if room 2 is alive
+// let checkAliveIntervalId = setInterval(checkRoomAlive, 30000, 2);
+
+async function toggleRoomAlive(powerButton, room_id){
+  // const powerButton = document.getElementById(`alive-button${room_id}`);
+
+  powerButton.classList.remove('alive-button-off');
+  powerButton.classList.add('alive-button-pending');
+
+  let isAlive = await checkRoomAlive(room_id);
+
+  if (isAlive == 1){
+    powerButton.classList.remove('alive-button-pending');
+    powerButton.classList.add('alive-button-on');
+  } else {
+    powerButton.classList.remove('alive-button-on');
+    powerButton.classList.remove('alive-button-pending');
+    powerButton.classList.add('alive-button-off');
+  }
+}
+
 
 // New room card button
 // renderNewRoomCard();

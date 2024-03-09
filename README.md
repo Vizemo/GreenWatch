@@ -1,6 +1,6 @@
 # Greenwatch
 <p align="center">
-  <img src="https://i.imgur.com/Y7tztzJ.jpg" width="250" height="250">
+  <img src="/images/greenwatchlogo.png" alt="" width="250" height="250">
 </p>
 
 ## Greenwatch's Purpose

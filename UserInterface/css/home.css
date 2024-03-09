@@ -31,6 +31,14 @@ main {
   margin-bottom: 5px;
 }
 
+/* .form-check-input{
+  background-color: black;
+}
+
+.form-check-label {
+  background-color: #dddddd ;
+} */
+
 /* Dark Mode CSS */
 .dark-mode {
   background-color: #343a40; /* Bootstrap dark background */
@@ -39,14 +47,26 @@ main {
 
 /* Override styles for dark mode */
 .dark-mode .room-card,
-.dark-mode .room-plus-card {
+.dark-mode .room-plus-card, 
+.dark-mode .card,
+.dark-mode .modal-content,
+.dark-mode .list-group-item {
   background-color: #424242; /* Darker background for cards */
   color: #dddddd; /* Lighter text for visibility */
   border-color: #333333; /* Optional: adjust if you have borders */
 }
 
+.dark-mode .form-check-input{
+  background-color: #dddddd;
+}
+
+/* .dark-mode .form-check-label{
+  background-color: black;
+} */
+
 .dark-mode .room-card:hover,
-.dark-mode .room-plus-card:hover {
+.dark-mode .room-plus-card:hover,
+.dark-mode .card {
   background-color: #535353; /* Slightly lighter background on hover */
 }
 
@@ -60,6 +80,14 @@ main {
   background-color: #007E33; /* Adjusted green for better visibility in dark mode */
 }
 
+.dark-mode .form-control,
+.dark-mode .list-group-item{
+  background-color: #333333;
+  border-color: transparent;
+  color: white;
+  font-size: clamp(1rem,50%,2rem);
+}
+
 /* Room Card CSS */
 .room-card {
   background-color: white;
@@ -70,6 +98,7 @@ main {
   padding: 20px;
   text-align: center;
   cursor: pointer;
+  animation: blink ;
 }
 .room-card img {
   max-width: 100%;
@@ -113,4 +142,28 @@ main {
 
 .alive-button-pending{
   background-color: orange;
+  animation: alive-button-blink 1s infinite; /*blink animation 1s on a loop*/
+}
+
+.alive-button-pending-green{
+  background-color: #007E33;
+  animation: alive-button-blink-green 1s infinite; /*blink animation 1s on a loop*/
+}
+
+
+
+
+
+/* Animations */
+
+/* Blink animation for Alive Button */
+@keyframes alive-button-blink { 
+  0%, 100% { background-color: grey; } /* Starting and ending with grey */
+  50% { background-color: orange; } /* Transition to orange at halfway point */
+}
+
+/* Blink animation for Alive Button */
+@keyframes alive-button-blink-green { 
+  0%, 100% { background-color: #007E33; } /* Starting and ending with grey */
+  50% { background-color: orange; } /* Transition to orange at halfway point */
 }

@@ -1,6 +1,6 @@
 # Greenwatch
 <p align="center">
-  <img src="/images/greenwatchlogo.png" alt="" width="250" height="250">
+  ![](GreenWatch.png)
 </p>
 
 ## Greenwatch's Purpose

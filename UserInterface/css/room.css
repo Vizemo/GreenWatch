@@ -9,6 +9,25 @@
   color: #ffffff !important; 
 }
 
+/* Slight border gap for easier viewing*/
+.table tr td:nth-child(1) {
+  padding-left: 5px; 
+}
+
+/* This is a light blue color to the element in low column */
+.table tr td:nth-child(2) {
+  color: #5b95d6 !important;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* This is a red color to the element in high column */
+.table tr td:nth-child(3) {
+  color: #ff3c3c !important; 
+  text-align: center;
+  font-weight: bold;
+}
+
 .notes-button {
   bottom : 10px;
   right : 10px;
@@ -128,25 +147,6 @@
 .dark-mode .table {
   background-color: #333333; /* Dark background for tables */
   color: #ffffff; /* White text for tables */
-}
-
-/* Slight border gap for easier viewing*/
-.dark-mode .table tr td:nth-child(1) {
-  padding-left: 5px; 
-}
-
-/* This is a light blue color to the element in low column */
-.dark-mode .table tr td:nth-child(2) {
-  color: #5b95d6 !important;
-  text-align: center;
-  font-weight: bold;
-}
-
-/* This is a red color to the element in high column */
-.dark-mode .table tr td:nth-child(3) {
-  color: #ff3c3c !important; 
-  text-align: center;
-  font-weight: bold;
 }
 
 /* Defines borders for table cells */

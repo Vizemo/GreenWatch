@@ -370,24 +370,47 @@ addRoomButton.addEventListener('click', () => {
   document.addEventListener('keyup', checkCreateRoomInputFields);
 });
 
+//cancel create room button actions
 const cancelCreateRoomButton = document.getElementById('create-room-cancel-button');
 cancelCreateRoomButton.addEventListener('click', () => {
   document.removeEventListener('keyup', checkCreateRoomInputFields);
 })
 
-const createRoomButton = document.getElementById('create-room-button');
-createRoomButton.addEventListener('click', createRoom);
+
+// Create Room button Actions
+const createRoomButton = document.getElementById('create-room-button'); // attack create-room-button attach it to createRoomButton
+
+// Function to be called when 'Enter' is pressed or the button is clicked
+function triggerCreateRoom(event) {
+  if (event.type === 'click' || (event.type === 'keypress' && event.key === 'Enter')) {
+    createRoom();
+  }
+}
+
+// Event listener for the button click
+createRoomButton.addEventListener('click', triggerCreateRoom);
+
+// Event listener for keypress on the entire document
+// You might want to limit this to a specific element depending on your UI structure
+document.addEventListener('keypress', (event) => {
+  if (event.key === 'Enter') {
+    triggerCreateRoom(event);
+  }
+});
+
+// Removing the keyup event listener if it's no longer needed
 createRoomButton.addEventListener('click', () => {
   document.removeEventListener('keyup', checkCreateRoomInputFields);
 });
-// createRoomButton.addEventListener('click', renderRoomCards); 
 
+// event listener (actions) for when canceling edit room 
 const cancelEditRoomButton = document.getElementById('edit-room-cancel-button');
 cancelEditRoomButton.addEventListener('click', () => {
   document.removeEventListener('keyup', checkEditRoomInputFields);
   sessionStorage.removeItem('room');
 });
 
+// actions to edit room (event listeners)
 const editRoomButton = document.getElementById('edit-room-button');
 editRoomButton.addEventListener('click', () => {
   document.removeEventListener('keyup', checkEditRoomInputFields);

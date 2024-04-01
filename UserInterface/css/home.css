@@ -6,6 +6,9 @@ body {
   margin: 0;
   padding: 0;
 }
+
+
+
 header {
   background-color: #07ad90;
   color: #ffffff;
@@ -22,7 +25,9 @@ main {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
-  padding: 20px;
+  padding: 45px;
+  justify-content: center;
+  align-items: center;
 }
 
 .btn {
@@ -94,7 +99,7 @@ main {
   border-radius: 15px;
   border-color: #07ad90;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-  /* margin: 10px; */
+  margin: auto; 
   padding: 20px;
   text-align: center;
   cursor: pointer;
@@ -151,7 +156,21 @@ main {
 }
 
 
+/* Notifications Button */
+.notes-button {
+  bottom: 10px;
+  right: 10px;
+  position: fixed;
+  z-index: 9999;
+}
 
+/* Media Queries */
+@media (max-width: 767.98px) { 
+  #settings-dropstart .dropdown-menu {
+    right: auto;
+    top: auto;
+}
+}
 
 
 /* Animations */

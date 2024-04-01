@@ -1,13 +1,19 @@
+/* Content of Page Styling */
 /* This increases the spacing of the buttons at the top */
 .input-group,
 .col-sm-6 {
   padding: 2px 2px;
 }
 
-/* This changes the title color to white */
-.dark-mode #room-name-text {
-  color: #ffffff !important; 
+
+/* Fixes the Agent Dropdown below the button */
+#agent-dropdown .dropdown-menu {
+  top: auto;
+  left: auto;
+  bottom: auto;
 }
+
+
 
 /* Slight border gap for easier viewing*/
 .table tr td:nth-child(1) {
@@ -54,14 +60,9 @@
   width: 80vw;
 }
 
-/* Adjust height of chart container for smaller screens */
-@media (max-width: 768px) {
-  .chart-container {
-    height: 50vh; /* Adjust as needed */
-  }
-}
 
-/* Dark Mode CSS */
+
+/* Dark Mode */
 .dark-mode {
   background-color: #343a40; /* Bootstrap dark background */
   color: #ffffff; /* White text color */
@@ -85,6 +86,11 @@
 .dark-mode .room-plus-card:hover,
 .dark-mode .card {
   background-color: #535353; /* Slightly lighter background on hover */
+}
+
+/* This changes the title color to white */
+.dark-mode #room-name-text {
+  color: #ffffff !important; 
 }
 
 /* Additional dark mode styles */
@@ -187,3 +193,18 @@
   border-bottom-right-radius: 7px;
 }
 /* end experiment section modifier for darkmode */
+
+/* Media Queries */
+@media (max-width: 767.98px) {
+  #agent-dropdown .dropdown-menu {
+    top: auto;
+    right: auto;
+  }
+}
+
+/* Adjust height of chart container for smaller screens */
+@media (max-width: 768px) {
+  .chart-container {
+    height: 50vh; /* Adjust as needed */
+  }
+}

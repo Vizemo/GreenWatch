@@ -612,6 +612,39 @@ textarea {
   */
 }
 
+/* Dark Mode CSS */
+
+.dark-mode {
+  background-color: #343a40; /* Bootstrap dark background */
+  color: #ffffff; /* White text color */
+}
+.dark-mode .body-login
+ {
+  background-color: #343a40; /* Bootstrap dark background */
+  color: #ffffff; /* White text color */
+}
+
+.dark-mode .face,
+.dark-mode .content{
+  background-color: #424242; /* Bootstrap dark background */
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+.dark-mode .username-content,
+.dark-mode .username-label{
+  border-color: #ffffff;
+  color: #ffffff;
+}
+.form-switch {
+  position: absolute;
+  /* padding-left: 2.5em; */
+  padding-right: 1.2rem;
+  top: 1rem;
+  right: 0;
+}
+
+/* Keyframes */
 @keyframes bounce {
   0% {
     transform: translateY(0);

@@ -99,11 +99,11 @@ main {
   border-radius: 15px;
   border-color: #07ad90;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-  margin: auto; 
   padding: 20px;
   text-align: center;
   cursor: pointer;
-  animation: blink ;
+  animation: blink;
+  box-sizing: border-box; /* Include padding and border in the width calculation */
 }
 .room-card img {
   max-width: 100%;
@@ -114,6 +114,9 @@ main {
   background-color: #eeeeee;
 }
 
+.text-clamp {
+  font-size: clamp(2.7rem, 2.5vw, 3rem);
+}
 
 
 .room-plus-card {

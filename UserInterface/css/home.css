@@ -114,8 +114,9 @@ main {
   background-color: #eeeeee;
 }
 
+/* Text Clamp for Room Name h2 */
 .text-clamp {
-  font-size: clamp(2.7rem, 2.5vw, 3rem);
+  font-size: clamp(2.7rem, 2.5vw, 3rem); 
 }
 
 

@@ -95,13 +95,6 @@ async function renderMeasurements() {
         l_data.push(lightValue);
       });
   
-      // Debug Lines
-      // console.log("Temperature:\n" + t_data);
-      // console.log("Humidity:\n" + h_data);
-      // console.log("Pressure:\n" + p_data);
-      // console.log("Light:\n" + l_data);
-      // console.log("Timestamps:\n" + dates);    
-  
       switch(parseInt(chartSelector.value)) {
         case 1: 
           updateChart(dates, t_data, 'Temperature');
@@ -134,22 +127,22 @@ async function renderMeasurements() {
               labels: dates,
               datasets: [
                 {
-                label: 'Temperature',
+                label: 'Temperature (C)',
                 data: t_data,
                 borderWidth: 1
                 },
                 {
-                  label: 'Humidity',
+                  label: 'Humidity (%)',
                   data: h_data,
                   borderWidth: 1
                 },
                 {
-                  label: 'Pressure',
+                  label: 'Pressure (kPa)',
                   data: p_data,
                   borderWidth: 1
                 },
                 {
-                  label: 'Light',
+                  label: 'Light (Lux)',
                   data: l_data,
                   borderWidth: 1
                 }

@@ -47,8 +47,8 @@ while True:
     hum = round(sense.get_humidity(), 2)
     #Light
     light = adc.read(channel = 0)
-    #AirPressure
-    pres = round(sense.get_pressure(), 2)
+    #AirPressure divided by 10 for a better graph look
+    pres = round(sense.get_pressure(), 2) / 10 
 
     #Dataset
     dataSet = {'temperature': temp,

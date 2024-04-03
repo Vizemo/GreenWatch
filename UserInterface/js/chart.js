@@ -89,7 +89,7 @@ async function renderMeasurements() {
         h_data.push(humidityValue);
   
         const pressureValue = measurement['pressure'];
-        p_data.push(pressureValue / 10);
+        p_data.push(pressureValue);
   
         const lightValue = measurement['light'];
         l_data.push(lightValue);

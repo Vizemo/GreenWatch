@@ -359,7 +359,7 @@ def take_measurements(simulated=True):
         # Light
         light= round(random.random() * 5 + 75, 2)
         # Air Pressure
-        pres = round(random.random() * 5 + 990, 2)
+        pres = round(random.random() * 5 + 990, 2) / 10
 
     else: 
         global sense

@@ -134,8 +134,9 @@ export async function renderRoomCards(intervalId) {
       
       // roomAlive.setAttribute('style', 'color: green');
       card_header.setAttribute('class', 'card-header');
+      card_header.setAttribute('class', 'text-clamp');
       card_body.setAttribute('class', 'row');
-      roomName.setAttribute('class', 'display-3');
+      roomName.setAttribute('class', 'display-3 text-clamp'); // adding text-clamp property to roomName
       roomName.setAttribute('style', 'color: grey');
             
       // Get agent 

@@ -10,7 +10,7 @@ body {
 
 
 header {
-  background-color: #07ad90;
+  background-color: #70ff58;
   color: #ffffff;
   padding: 20px;
   text-align: center;
@@ -82,7 +82,7 @@ main {
   background-color: #333333; /* Adjust header background for dark mode */
 }
 .dark-mode .alive-button-on{
-  background-color: #007E33; /* Adjusted green for better visibility in dark mode */
+  background-color: #4CAD3C; /* Adjusted green for better visibility in dark mode */
 }
 
 .dark-mode .form-control,
@@ -97,7 +97,7 @@ main {
 .room-card {
   background-color: white;
   border-radius: 15px;
-  border-color: #07ad90;
+  border-color: #4CAD3C;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
   padding: 20px;
   text-align: center;
@@ -142,7 +142,7 @@ main {
 }
 
 .alive-button-on{
-  background-color: #007E33;
+  background-color: #4CAD3C;
 }
 
 .alive-button-off{
@@ -155,7 +155,7 @@ main {
 }
 
 .alive-button-pending-green{
-  background-color: #007E33;
+  background-color: #4CAD3C;
   animation: alive-button-blink-green 1s infinite; /*blink animation 1s on a loop*/
 }
 
@@ -166,6 +166,10 @@ main {
   right: 10px;
   position: fixed;
   z-index: 9999;
+}
+
+.button-color {
+  background-color:#4CAD3C;
 }
 
 /* Media Queries */
@@ -187,6 +191,6 @@ main {
 
 /* Blink animation for Alive Button */
 @keyframes alive-button-blink-green { 
-  0%, 100% { background-color: #007E33; } /* Starting and ending with grey */
+  0%, 100% { background-color: #4CAD3C; } /* Starting and ending with grey */
   50% { background-color: orange; } /* Transition to orange at halfway point */
 }

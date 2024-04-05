@@ -60,6 +60,11 @@
   width: 80vw;
 }
 
+/* Constant button colors with logo */
+.button-color {
+  background-color:#4CAD3C;
+}
+
 
 
 /* Dark Mode */

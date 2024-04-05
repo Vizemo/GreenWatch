@@ -336,6 +336,7 @@ cancelCreateUserButton.addEventListener('click', () => {
 
 const createUserButton = document.getElementById('create-user-button');
 createUserButton.addEventListener('click', createUser);
+
 createUserButton.addEventListener('click', () => {
   document.removeEventListener('keyup', checkCreateUserInputFields);
   document.removeEventListener('mouseup', checkCreateUserInputFields);
@@ -389,7 +390,7 @@ function triggerCreateRoom(event) {
 
 // Event listener for the button click
 createRoomButton.addEventListener('click', triggerCreateRoom);
-
+createRoomButton.setAttribute
 // Event listener for keypress on the entire document
 // You might want to limit this to a specific element depending on your UI structure
 document.addEventListener('keypress', (event) => {

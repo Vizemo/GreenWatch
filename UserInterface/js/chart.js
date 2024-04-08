@@ -54,9 +54,8 @@ async function renderMeasurements() {
       // Enable export data button
       exportDataBtn.disabled = false;
       exportDataBtn.addEventListener('click', () => {
-        const csvData = Utils.csvMaker(measurements);
-        // console.log(csvData);
-
+        const csvData = Utils.csvMaker(measurements, roomID);
+        console.log(csvData['file_name']);
         Utils.download(csvData['csv_data'], csvData['file_name']);
       });
 

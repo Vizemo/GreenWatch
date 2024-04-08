@@ -379,30 +379,34 @@ cancelCreateRoomButton.addEventListener('click', () => {
 
 
 // Create Room button Actions
-const createRoomButton = document.getElementById('create-room-button'); // attack create-room-button attach it to createRoomButton
+const createRoomButton = document.getElementById('create-room-button'); 
 
 // Function to be called when 'Enter' is pressed or the button is clicked
 function triggerCreateRoom(event) {
   if (event.type === 'click' || (event.type === 'keypress' && event.key === 'Enter')) {
     createRoom();
+    event.preventDefault(); // Prevent default form submission behavior
   }
 }
 
 // Event listener for the button click
 createRoomButton.addEventListener('click', triggerCreateRoom);
-createRoomButton.setAttribute
-// Event listener for keypress on the entire document
-// You might want to limit this to a specific element depending on your UI structure
-document.addEventListener('keypress', (event) => {
+
+// Attach keypress event listener to input fields inside the modal
+// Assuming 'create-room-name' is the ID of an input inside your modal
+document.getElementById('create-room-name').addEventListener('keypress', (event) => {
   if (event.key === 'Enter') {
     triggerCreateRoom(event);
   }
 });
 
+
+
 // Removing the keyup event listener if it's no longer needed
 createRoomButton.addEventListener('click', () => {
   document.removeEventListener('keyup', checkCreateRoomInputFields);
 });
+
 
 // event listener (actions) for when canceling edit room 
 const cancelEditRoomButton = document.getElementById('edit-room-cancel-button');

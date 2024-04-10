@@ -773,7 +773,7 @@ async function createFirstServer(local) {
 function displayServerIPAddress(server_ip) {
   // Display server ip address
   const serverIPText = document.getElementById('server-ip');
-  serverIPText.textContent = `Server IPv4 Address: ${server_ip}`;
+  serverIPText.textContent = `GreenWatch: ${server_ip}`;
   // serverIPText.href = `http://${server_ip}:5000/servers`;
 
   serverIPText.addEventListener('click', async () => {

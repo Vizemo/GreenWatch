@@ -637,7 +637,11 @@ textarea {
   color: #ffffff;
 }
 
-.dark-mode .face .content .field-wrapper input[type=text], .face .content .field-wrapper input[type=password], .face .content .field-wrapper textarea{
+/* .dark-mode .face .content .field-wrapper input[type=text], .face .content .field-wrapper input[type=password], .face .content .field-wrapper textarea{
+  color: #ffffff;
+} */
+
+.dark-mode .face .content .field-wrapper input[type=text],.dark-mode .face .content .field-wrapper input[type=password]{
   color: #ffffff;
 }
 .form-switch {

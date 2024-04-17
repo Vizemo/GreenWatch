@@ -379,30 +379,35 @@ cancelCreateRoomButton.addEventListener('click', () => {
 
 
 // Create Room button Actions
-const createRoomButton = document.getElementById('create-room-button'); // attack create-room-button attach it to createRoomButton
+const createRoomButton = document.getElementById('create-room-button'); 
 
 // Function to be called when 'Enter' is pressed or the button is clicked
 function triggerCreateRoom(event) {
   if (event.type === 'click' || (event.type === 'keypress' && event.key === 'Enter')) {
-    createRoom();
+        const room = getCreateRoomObject();
+        // window.alert(isCreateRoomInputFieldsEmpty(room)); //shows if room is empty
+        if (event.key === 'Enter' && isCreateRoomInputFieldsEmpty(room) === false) {
+          createRoom();
+        }
+    
+    event.preventDefault(); // Prevent default form submission behavior
   }
 }
 
 // Event listener for the button click
 createRoomButton.addEventListener('click', triggerCreateRoom);
-createRoomButton.setAttribute
-// Event listener for keypress on the entire document
-// You might want to limit this to a specific element depending on your UI structure
-document.addEventListener('keypress', (event) => {
-  if (event.key === 'Enter') {
-    triggerCreateRoom(event);
-  }
-});
+//get 'create-room-name and check if the keypress is active
+document.getElementById('create-room-name').addEventListener('keypress', triggerCreateRoom);
+
+
+
+
 
 // Removing the keyup event listener if it's no longer needed
 createRoomButton.addEventListener('click', () => {
   document.removeEventListener('keyup', checkCreateRoomInputFields);
 });
+
 
 // event listener (actions) for when canceling edit room 
 const cancelEditRoomButton = document.getElementById('edit-room-cancel-button');
@@ -531,7 +536,7 @@ function checkCreateRoomInputFields() {
 
 // Returns the values of each input tag for create room as an object
 function getCreateRoomObject() {
-  const greenhouseID = document.getElementById('create-greenhouse-id');
+  // const greenhouseID = document.getElementById('create-greenhouse-id');
   const name = document.getElementById('create-room-name');
 
   const room = {

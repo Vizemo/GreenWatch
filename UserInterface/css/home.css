@@ -65,9 +65,6 @@ main {
   background-color: #dddddd;
 }
 
-/* .dark-mode .form-check-label{
-  background-color: black;
-} */
 
 .dark-mode .room-card:hover,
 .dark-mode .room-plus-card:hover,
@@ -85,7 +82,7 @@ main {
   background-color: #4CAD3C; /* Adjusted green for better visibility in dark mode */
 }
 
-.dark-mode .form-control,
+
 .dark-mode .list-group-item{
   background-color: #333333;
   border-color: transparent;

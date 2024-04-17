@@ -636,6 +636,10 @@ textarea {
   border-color: #ffffff;
   color: #ffffff;
 }
+
+.dark-mode .face .content .field-wrapper input[type=text], .face .content .field-wrapper input[type=password], .face .content .field-wrapper textarea{
+  color: #ffffff;
+}
 .form-switch {
   position: absolute;
   /* padding-left: 2.5em; */
@@ -643,6 +647,7 @@ textarea {
   top: 1rem;
   right: 0;
 }
+
 
 /* Keyframes */
 @keyframes bounce {

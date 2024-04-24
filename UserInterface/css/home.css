@@ -6,8 +6,11 @@ body {
   margin: 0;
   padding: 0;
 }
+
+
+
 header {
-  background-color: #07ad90;
+  background-color: #70ff58;
   color: #ffffff;
   padding: 20px;
   text-align: center;
@@ -22,7 +25,9 @@ main {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
-  padding: 20px;
+  padding: 45px;
+  justify-content: center;
+  align-items: center;
 }
 
 .btn {
@@ -60,9 +65,6 @@ main {
   background-color: #dddddd;
 }
 
-/* .dark-mode .form-check-label{
-  background-color: black;
-} */
 
 .dark-mode .room-card:hover,
 .dark-mode .room-plus-card:hover,
@@ -77,10 +79,10 @@ main {
   background-color: #333333; /* Adjust header background for dark mode */
 }
 .dark-mode .alive-button-on{
-  background-color: #007E33; /* Adjusted green for better visibility in dark mode */
+  background-color: #4CAD3C; /* Adjusted green for better visibility in dark mode */
 }
 
-.dark-mode .form-control,
+
 .dark-mode .list-group-item{
   background-color: #333333;
   border-color: transparent;
@@ -92,13 +94,13 @@ main {
 .room-card {
   background-color: white;
   border-radius: 15px;
-  border-color: #07ad90;
+  border-color: #4CAD3C;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-  /* margin: 10px; */
   padding: 20px;
   text-align: center;
   cursor: pointer;
-  animation: blink ;
+  animation: blink;
+  box-sizing: border-box; /* Include padding and border in the width calculation */
 }
 .room-card img {
   max-width: 100%;
@@ -109,6 +111,10 @@ main {
   background-color: #eeeeee;
 }
 
+/* Text Clamp for Room Name h2 */
+.text-clamp {
+  font-size: clamp(2.7rem, 2.5vw, 3rem); 
+}
 
 
 .room-plus-card {
@@ -133,7 +139,7 @@ main {
 }
 
 .alive-button-on{
-  background-color: #007E33;
+  background-color: #4CAD3C;
 }
 
 .alive-button-off{
@@ -146,12 +152,30 @@ main {
 }
 
 .alive-button-pending-green{
-  background-color: #007E33;
+  background-color: #4CAD3C;
   animation: alive-button-blink-green 1s infinite; /*blink animation 1s on a loop*/
 }
 
 
+/* Notifications Button */
+.notes-button {
+  bottom: 10px;
+  right: 10px;
+  position: fixed;
+  z-index: 9999;
+}
 
+.button-color {
+  background-color:#4CAD3C;
+}
+
+/* Media Queries */
+@media (max-width: 767.98px) { 
+  #settings-dropstart .dropdown-menu {
+    right: auto;
+    top: auto;
+}
+}
 
 
 /* Animations */
@@ -164,6 +188,6 @@ main {
 
 /* Blink animation for Alive Button */
 @keyframes alive-button-blink-green { 
-  0%, 100% { background-color: #007E33; } /* Starting and ending with grey */
+  0%, 100% { background-color: #4CAD3C; } /* Starting and ending with grey */
   50% { background-color: orange; } /* Transition to orange at halfway point */
 }

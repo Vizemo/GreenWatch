@@ -3,6 +3,8 @@
   <!-- Hard Set Dark mode with Bootstrap data-bs-theme="dark" -->
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>GreenWatch Home</title>
 <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
 <!-- Bootstrap CSS -->
@@ -11,14 +13,15 @@
 <!-- Font Awesome -->
 <script src="https://kit.fontawesome.com/85adf60c1d.js" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="/css/home.css">
+
 </head>
 
 <body>
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#"><img class="logo" src="\images\greenwatchlogo.png" alt="" height="50" width="50"></a>
-      <a id="server-ip" class="navbar-brand" href="#">Server IPv4 Address: ...</a>
+      <a class="navbar-brand" href="#"><img class="img-fluid logo" src="\images\greenwatchlogo.png" alt="" height="50" width="50"></a>
+      <a id="server-ip" class="navbar-brand" href="#">GreenWatch ...</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown"
         aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -52,7 +55,7 @@
     </div>
   </nav>
   <div class="parent-container d-flex">
-    <div class="container mt-5" id="room-grid">
+    <div class="container my-5" id="room-grid">
       <!--Add room container
     <div class="col-md-6 col-lg-4">
       <div class="card add-container">
@@ -67,10 +70,17 @@
     </div>
 
     <!-- Notes Chatbox -->
-    <div class="container mt-5 col-4">
-      <div class="card mx-auto">
-        <div class=" card-header bg-transparent">
-          <div class="d-flex align-items-center justify-content-between">
+    <button 
+      class="btn btn-lg btn-dark fa-solid fa-comments notes-button"
+      id="open-chatbox-btn" 
+      data-bs-target="#notes-modal" 
+      data-bs-toggle="modal">
+    </button>
+    <div class="modal fade" id="notes-modal" tabindex="-1" aria-labelledby="notes-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class=" card-header">
+          <div class="modal-header">
             Notifications
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bell" viewBox="0 0 16 16">
               <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6"/>
@@ -83,6 +93,9 @@
         </div>
       </div>
     </div>
+    </div>
+    
+    
     <script type="module" src="js/chatbox.js"></script>
   </div>
 
@@ -98,7 +111,7 @@
           <!-- User List -->
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-success" data-bs-target="#users-modal-create" data-bs-toggle="modal"
+          <button type="button" class="btn btn-success button-color" data-bs-target="#users-modal-create" data-bs-toggle="modal"
             id="add-user-button">Add User</button>
         </div>
       </div>
@@ -222,7 +235,7 @@
           <div>
             <button type="button" class="btn btn-secondary" data-bs-target="#users-modal" data-bs-toggle="modal"
               id="create-user-cancel-button">Cancel</button>
-            <button type="button" class="btn btn-outline-success" data-bs-target="#users-modal" data-bs-toggle="modal"
+            <button type="button" class="btn btn-success button-color" data-bs-target="#users-modal" data-bs-toggle="modal"
               id="create-user-button">Create</button>
           </div>
           <!-- <input type="submit" id="create-user-button"> -->
@@ -266,7 +279,7 @@
           <!-- Room List -->
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-success" data-bs-target="#rooms-modal-create" data-bs-toggle="modal"
+          <button type="button" class="btn btn-success button-color" data-bs-target="#rooms-modal-create" data-bs-toggle="modal"
             id="add-room-button">Add Room</button>
         </div>
       </div>
@@ -301,10 +314,9 @@
           <div>
             <button type="button" class="btn btn-secondary" data-bs-target="#rooms-modal" data-bs-toggle="modal"
               id="create-room-cancel-button">Cancel</button>
-            <button type="button" class="btn btn-outline-success" data-bs-target="#rooms-modal" data-bs-toggle="modal"
+            <button type="button" class="btn btn-success button-color" data-bs-target="#rooms-modal" data-bs-toggle="modal"
               id="create-room-button">Create</button>
           </div>
-          <!-- <input type="submit" id="create-user-button"> -->
         </div>
       </div>
     </div>
@@ -326,17 +338,10 @@
               <label for="edit-room-name" class="col-form-label">Room Name</label>
               <input type="text" class="form-control" id="edit-room-name" required>
             </div>
-            <!-- <div class="mb-3">
-              <label for="edit-greenhouse-id" class="col-form-label">Greenhouse ID</label>
-              <input type="text" class="form-control" id="edit-greenhouse-id" placeholder="e.x.: 1" required>
-            </div> -->
           </form>
         </div>
         <div class="modal-footer justify-content-between" id="rooms-modal-edit-footer">
           <div>
-            <!-- <p id="room-edit-invalid-text" style="color: red; visibility: hidden;">
-              Input fields cannot be empty.<br>
-            </p> -->
             <p id="room-edit-invalid-name-length-text" style="color: red; visibility: hidden;">
               Name is too long.<br>
             </p>
@@ -344,10 +349,9 @@
           <div>
             <button type="button" class="btn btn-secondary" data-bs-target="#rooms-modal" data-bs-toggle="modal"
               id="edit-room-cancel-button">Cancel</button>
-            <button type="button" class="btn btn-outline-success" data-bs-target="#rooms-modal" data-bs-toggle="modal"
+            <button type="button" class="btn btn-success" data-bs-target="#rooms-modal" data-bs-toggle="modal"
               id="edit-room-button">Save</button>
           </div>
-          <!-- <input type="submit" id="create-user-button"> -->
         </div>
       </div>
     </div>

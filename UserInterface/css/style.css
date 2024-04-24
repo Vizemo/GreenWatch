@@ -42,7 +42,7 @@ body {
   height: 350px;
   padding: 20px;
   background: rgba(250, 250, 250, 0.96);
-  border: 3px solid #07ad90;
+  border: 3px solid #4CAD3C;
   border-radius: 3px;
 }
 .face .content {
@@ -50,7 +50,7 @@ body {
 }
 .face .content h2 {
   font-size: 1.2em;
-  color: #07ad90;
+  color: #4CAD3C;
 }
 .face .content .field-wrapper {
   margin-top: 30px;
@@ -78,7 +78,7 @@ body {
   border: none;
   background: transparent;
   line-height: 2em;
-  border-bottom: 1px solid rgb(7, 173, 144);
+  border-bottom: 1px solid #4CAD3C;
   color: #666;
 }
 .face .content .field-wrapper input[type=text]::-webkit-input-placeholder, .face .content .field-wrapper input[type=password]::-webkit-input-placeholder, .face .content .field-wrapper textarea::-webkit-input-placeholder {
@@ -102,10 +102,10 @@ body {
   appearance: none;
   cursor: pointer;
   width: 100%;
-  background: #07ad90;
+  background: #4CAD3C;
   line-height: 2em;
   color: #fff;
-  border: 1px solid #07ad90;
+  border: 1px solid #4CAD3C;
   border-radius: 3px;
   padding: 5px;
 }
@@ -128,7 +128,7 @@ body {
   height: 130px;
   text-align: center;
   font-size: 2em;
-  color: #07ad90;
+  color: #4CAD3C;
   left: 50%;
   top: 50%;
   -webkit-transform: translate(-50%, -50%);
@@ -138,7 +138,7 @@ body {
   content: "";
   width: 50px;
   height: 25px;
-  border: 10px solid #07ad90;
+  border: 10px solid #4CAD3C;
   border-right: 0;
   border-top: 0;
   left: 50%;
@@ -211,7 +211,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  background-color: #07ad90;
+  background-color: #4CAD3C;
   padding: 20px 40px;
   height: 80px;
 }
@@ -299,7 +299,7 @@ header {
 
 .experiment-table th,
 .experiment-table td {
-  border: 1 px #07ad90;
+  border: 1 px #4CAD3C;
   padding: 10px;
 }
 
@@ -314,7 +314,7 @@ header {
 
 /* Add experiment button */
 .add-experiment-btn{
-  background-color: #07ad90;
+  background-color: #4CAD3C;
   color: white;
   padding: 10px 15px;
   border: none;
@@ -323,7 +323,7 @@ header {
 }
 
 .add-experiment-btn:hover {
-  background-color: #3e8e41;
+  background-color: #4CAD3C;
 }
 
 /* Modal dialogue - a modal is like a pop up window */
@@ -378,7 +378,7 @@ header {
 
 /* Save button */
 .save-btn {
-  background-color: #4CAF50;
+  background-color: #4CAD3C;
   color: white;
   padding: 10px 15px;
   border: none;
@@ -387,7 +387,7 @@ header {
 }
 
 .save-btn:hover {
-  background-color: #3e8e41;
+  background-color: #4CAD3C;
 }
 
 /*  error msg */
@@ -601,7 +601,7 @@ textarea {
 }
 
 .animated-header {
-  color: #07ad90;
+  color: #4CAD3C;
   font-size: 60px;
   text-align: center;
   /*
@@ -612,6 +612,48 @@ textarea {
   */
 }
 
+/* Dark Mode CSS */
+
+.dark-mode {
+  background-color: #343a40; /* Bootstrap dark background */
+  color: #ffffff; /* White text color */
+}
+.dark-mode .body-login
+ {
+  background-color: #343a40; /* Bootstrap dark background */
+  color: #ffffff; /* White text color */
+}
+
+.dark-mode .face,
+.dark-mode .content{
+  background-color: #424242; /* Bootstrap dark background */
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+.dark-mode .username-content,
+.dark-mode .username-label{
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+/* .dark-mode .face .content .field-wrapper input[type=text], .face .content .field-wrapper input[type=password], .face .content .field-wrapper textarea{
+  color: #ffffff;
+} */
+
+.dark-mode .face .content .field-wrapper input[type=text],.dark-mode .face .content .field-wrapper input[type=password]{
+  color: #ffffff;
+}
+.form-switch {
+  position: absolute;
+  /* padding-left: 2.5em; */
+  padding-right: 1.2rem;
+  top: 1rem;
+  right: 0;
+}
+
+
+/* Keyframes */
 @keyframes bounce {
   0% {
     transform: translateY(0);
@@ -627,6 +669,11 @@ textarea {
 
 small {
   font-size: 0.7em;
+}
+
+
+.button-color {
+  background-color:#4CAD3C !important;
 }
 
 @-webkit-keyframes success {

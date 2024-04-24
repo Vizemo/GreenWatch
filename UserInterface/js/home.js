@@ -134,8 +134,9 @@ export async function renderRoomCards(intervalId) {
       
       // roomAlive.setAttribute('style', 'color: green');
       card_header.setAttribute('class', 'card-header');
+      card_header.setAttribute('class', 'text-clamp');
       card_body.setAttribute('class', 'row');
-      roomName.setAttribute('class', 'display-3');
+      roomName.setAttribute('class', 'display-3 text-clamp'); // adding text-clamp property to roomName
       roomName.setAttribute('style', 'color: grey');
             
       // Get agent 
@@ -167,7 +168,7 @@ export async function renderRoomCards(intervalId) {
       const stop_button = document.createElement('button');
       const download_button = document.createElement('button');
 
-      download_button.setAttribute("class", "btn btn-success");
+      download_button.setAttribute("class", "btn btn-success button-color");
       download_button.innerHTML =`<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
         <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"></path>
         <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"></path>
@@ -772,7 +773,7 @@ async function createFirstServer(local) {
 function displayServerIPAddress(server_ip) {
   // Display server ip address
   const serverIPText = document.getElementById('server-ip');
-  serverIPText.textContent = `Server IPv4 Address: ${server_ip}`;
+  serverIPText.textContent = `GreenWatch: ${server_ip}`;
   // serverIPText.href = `http://${server_ip}:5000/servers`;
 
   serverIPText.addEventListener('click', async () => {

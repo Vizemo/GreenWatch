@@ -384,20 +384,25 @@ const createRoomButton = document.getElementById('create-room-button');
 // Function to be called when 'Enter' is pressed or the button is clicked
 function triggerCreateRoom(event) {
   if (event.type === 'click' || (event.type === 'keypress' && event.key === 'Enter')) {
+    
         const room = getCreateRoomObject();
         // window.alert(isCreateRoomInputFieldsEmpty(room)); //shows if room is empty
         if (event.key === 'Enter' && isCreateRoomInputFieldsEmpty(room) === false) {
           createRoom();
+        } else if(event.type === 'click' && isCreateRoomInputFieldsEmpty(room) === false){
+          createRoom();
+          
         }
     
     event.preventDefault(); // Prevent default form submission behavior
   }
+
 }
 
-// Event listener for the button click
-createRoomButton.addEventListener('click', triggerCreateRoom);
+
 //get 'create-room-name and check if the keypress is active
 document.getElementById('create-room-name').addEventListener('keypress', triggerCreateRoom);
+document.getElementById('create-room-button').addEventListener('click', triggerCreateRoom);
 
 
 

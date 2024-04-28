@@ -6,33 +6,10 @@ from time import sleep
 from sense_hat import SenseHat
 from spidev import SpiDev
 
-# The purpose of this section is to create a launcher.sh file that will run
-# When the agent boots up that will in turn automatically run agent.py
-# The launcher will be regenerated each time to ensure that the correct
-# agent file will be run in the event the filename changing.
-
-cwd = os.getcwd()
-launcherPath = cwd + "/launcher.sh"
-
-if not os.path.exists(launcherPath):
-	# Adding the launcher.sh script to run at startup using cronjob
-	cron_command = 'echo "@reboot ' + launcherPath + '" | sudo crontab -'
-	os.system(cron_command)
-
-# Creating launcher.sh
-f = open(launcherPath,"w")
-f.write("cd /" + "\n" + "sudo python3 " + __file__ + "\n" + "cd /")
-f.close()
-
-# Ensuring that launcher.sh is executable
-os.chmod(launcherPath, 0o755)
-
-
-
-roomID = 1
-ServerIP='127.0.0.1'
-duration = 3
-private_key = 'HWGD9DTATFG6B8ZCKWAYSN8JZCP1BI5DOBHA9ND3AJ5U604D8UO0CNJZJKD0'
+roomID = '///room-id///'
+ServerIP='///server-ip///'
+duration = '///duration///'
+private_key = '///private-key///'
 
 req_headers = {
     "Key": private_key

@@ -16,8 +16,9 @@ ServerIP='127.0.0.1'
 server_data = None
 duration = 3
 start_time = time()
+retryTime = 5
 
-private_key = 'GO5XY5WAQUMCVZIQ983140M4JK1B1KR6EF0F4O5B3NDFP40DZ8FQD5DDR0OB'
+private_key = 'HWGD9DTATFG6B8ZCKWAYSN8JZCP1BI5DOBHA9ND3AJ5U604D8UO0CNJZJKD0'
 
 req_headers = {
     "Key": private_key
@@ -140,8 +141,7 @@ def post_current_states():
         "reboot": reboot
         }
     print(f"\ncompleted action_json: {action_json}\n")
-
-    post_action = requests.post(action_url, headers=req_headers, json=action_json)
+    post_action = requests.post(action_url, headers=req_headers, json=action_json, timeout=10)
     print(post_action)
 
 def update_current_states(data, file_path = 'dummy_config.json'):
@@ -229,7 +229,7 @@ def process_actions(get_room):
                         }
                 print(f"\n action_json: {action_json}\n")
 
-                patch_action = requests.patch(action_url, headers=req_headers, json=action_json)
+                patch_action = requests.patch(action_url, headers=req_headers, json=action_json, timeout=10)
                 print(patch_action)
 
             # Obtain last action request to room
@@ -381,60 +381,73 @@ if __name__ == "__main__":
 
     # Read configuration file and initialize states
     config_data = read_config()
-    initialize_states(config_data)
+
+    # Get host name and ip address
+    host_name, host_IP = get_hostname_IP()
+
+    # Setup loop
+    patch_response = None
+    while not patch_response:
+        try:
+            initialize_states(config_data)
+            patch_response = requests.patch(agent_url, headers=req_headers, json={'device_ip_address': host_IP}, timeout=10)
+            print(patch_response.text)
+        except Exception as e:
+            print(f'Exception occured:\n {str(e)} \nRetrying in {retryTime} seconds...')
+            sleep(retryTime)
 
     #initializing sensors
     # sense = SenseHat()
     # adc = MCP()
 
-    # Get host name and ip address
-    host_name, host_IP = get_hostname_IP()
-
-    patch_response = requests.patch(agent_url, headers=req_headers, json={'device_ip_address': host_IP})
-    print(patch_response.text)
-
+    # Main operation loop
     while True:
         print("****************************\n")
 
         # Update agent status to 'on'
-        patch_status = requests.patch(agent_url, headers=req_headers, json={'status': 1})
-        
-        if not stop:
-            dataSet = take_measurements(simulated=True)
-            print(dataSet)
+        try:
+            patch_status = requests.patch(agent_url, headers=req_headers, json={'status': 1}, timeout=10)
 
-            post_measurement = requests.post(server_url, headers=req_headers, json=dataSet)
-            # print(post_measurement)
-            print(post_measurement.text)
 
-            server_data = json.loads(post_measurement.text)
-            # print(int(server_data['duration']))
+            if not stop:
+                dataSet = take_measurements(simulated=True)
+                print(dataSet)
 
-        if server_data is not None:
-            sleep(int(server_data["duration"]))
-            if duration != int(server_data["duration"]): 
-                duration = int(server_data["duration"])
-        else:
-            sleep(duration)
+                post_measurement = requests.post(server_url, headers=req_headers, json=dataSet, timeout=10)
+                # print(post_measurement)
+                print(post_measurement.text)
 
-        # Get data from room
-        get_room = requests.get(f'http://{ServerIP}:5000/rooms/{roomID}', headers=req_headers)
-        # print(get_room.json()['actions'])
+                server_data = json.loads(post_measurement.text)
+                # print(int(server_data['duration']))
 
-        if vent_state < 2:
-            if vent_moving:
-                done = simulate_toggle("vent")
-                if done:
-                    vent_state = (vent_state * -1) + 1
-                    post_current_states()
-                    update_current_states(config_data)
+            if server_data is not None:
+                sleep(int(server_data["duration"]))
+                if duration != int(server_data["duration"]): 
+                    duration = int(server_data["duration"])
+            else:
+                sleep(duration)
 
-        if shade_state < 2:
-            if shade_moving:
-                done = simulate_toggle("shade")
-                if done:
-                    shade_state = (shade_state * -1) + 1
-                    post_current_states()
-                    update_current_states(config_data)
+            # Get data from room
+            get_room = requests.get(f'http://{ServerIP}:5000/rooms/{roomID}', headers=req_headers,timeout=10)
+            # print(get_room.json()['actions'])
 
-        process_actions(get_room)
+            if vent_state < 2:
+                if vent_moving:
+                    done = simulate_toggle("vent")
+                    if done:
+                        vent_state = (vent_state * -1) + 1
+                        post_current_states()
+                        update_current_states(config_data)
+
+            if shade_state < 2:
+                if shade_moving:
+                    done = simulate_toggle("shade")
+                    if done:
+                        shade_state = (shade_state * -1) + 1
+                        post_current_states()
+                        update_current_states(config_data)
+
+            process_actions(get_room)
+        except Exception as e:
+            print(f'Exception occured:\n {str(e)} \nRetrying in {retryTime} seconds...')
+            sleep(retryTime)

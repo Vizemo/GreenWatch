@@ -1,44 +1,51 @@
 #!/usr/bin/env python
 import requests
 import json
-import os
-from time import sleep
+from time import sleep, time
+import datetime
 from sense_hat import SenseHat
 from spidev import SpiDev
-
-# The purpose of this section is to create a launcher.sh file that will run
-# When the agent boots up that will in turn automatically run agent.py
-# The launcher will be regenerated each time to ensure that the correct
-# agent file will be run in the event the filename changing.
-
-cwd = os.getcwd()
-launcherPath = cwd + "/launcher.sh"
-
-if not os.path.exists(launcherPath):
-	# Adding the launcher.sh script to run at startup using cronjob
-	cron_command = 'echo "@reboot ' + launcherPath + '" | sudo crontab -'
-	os.system(cron_command)
-
-# Creating launcher.sh
-f = open(launcherPath,"w")
-f.write("cd /" + "\n" + "sudo python3 " + __file__ + "\n" + "cd /")
-f.close()
-
-# Ensuring that launcher.sh is executable
-os.chmod(launcherPath, 0o755)
-
-
+import random
+import socket
+import subprocess
+import math
+import os
 
 roomID = 1
 ServerIP='127.0.0.1'
 duration = 3
-private_key = 'HWGD9DTATFG6B8ZCKWAYSN8JZCP1BI5DOBHA9ND3AJ5U604D8UO0CNJZJKD0'
+private_key = 'RM04Y4DVRIX0PCXY5EIYGXMMKZOB2F7HHJZSVQ2NH2XK6VC5GM2E6XZCXPT7'
 
 req_headers = {
     "Key": private_key
 }
 
+server_data = None
+start_time = time()
+retryTime = 5
+
 server_url = f"http://{ServerIP}:5000/rooms/{roomID}/measurement"
+action_url = f"http://{ServerIP}:5000/rooms/{roomID}/action"
+agent_url = f"http://{ServerIP}:5000/servers/agents/{roomID}"
+
+# Actions.
+last_action_timestamp = ''
+vent_state = 3
+shade_state = 3
+reboot = 0
+stop = 0
+ack = 0
+
+# States
+vent_states = ['Open', 'Closed', 'Pending', 'Unknown']
+shade_states = ['Open', 'Closed', 'Pending', 'Unknown']
+
+# Time tracking (simulation)
+vent_time = 0
+vent_moving = False
+
+shade_time = 0
+shade_moving = False
 
 class MCP:
     def __init__(self, bus = 0, device = 0):
@@ -58,31 +65,402 @@ class MCP:
     def close(self):
         self.spi.close()
 
+# Function to reboot the Raspberry Pi
+def reboot_pi():
+    """
+    Invokes reboot of Raspberry Pi
+    """
+    try:
+        print("[REBOOT] Rebooting Raspberry Pi...")
+        subprocess.run(['sudo', 'reboot'], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to reboot: {e}")
 
-#initializing sensors
-sense = SenseHat()
-adc = MCP()
+def simulate_reboot_pi(delay=5):
+    """
+    Simulates reboot of Raspberry Pi
+    """
+    global reboot
+    if reboot:
+        print("[SYSTEM] Initiating reboot of system...\n")
+        sleep(delay)
+        print(f"[SYSTEM] System rebooted in {delay} seconds \n")
+        reboot = 0
+    else:
+        print("Reboot already in progres...")
+    
+def read_config(file_path = 'agent_config.json'):
+    """
+    Reads .json configuration file and returns data
+    """
+    with open(file_path, 'r') as file:
+        config_data = json.load(file)
+    return config_data
+
+def initialize_states(config_data):
+    """
+    Initializes states based on config
+    """
+    global stop
+    global vent_state
+    global shade_state
+    global duration
+    
+    stop = config_data['states']['stop']
+    vent_state = config_data['states']['vent_state']
+    shade_state = config_data['states']['shade_state']
+
+    duration = config_data['settings']['duration']
+
+    for state, value in config_data['states'].items():
+        print(f'{state}: {value}')
+
+    # Perform actions to confirm physical states
+    toggle_vent(vent_state)
+    toggle_shade(shade_state)
+
+    # Post current states to update server
+    post_current_states()
+
+def post_current_states():
+    """
+    Posts current state data to server as fulfilled actions
+    """
+    global stop
+    global vent_state
+    global shade_state
+    global reboot
+
+    action_json = {
+        "ack": ack,
+        "status": 3, # completed
+        "stop": stop,
+        "vent_state": vent_state,
+        "shade_state": shade_state,
+        "reboot": reboot
+        }
+    print(f"\ncompleted action_json: {action_json}\n")
+    post_action = requests.post(action_url, headers=req_headers, json=action_json, timeout=10)
+    print(post_action)
+
+def update_current_states(data, file_path = 'agent_config.json'):
+    """
+    Updates current states in config.json file
+    """
+    with open(file_path, 'w') as file:
+        global stop
+        global vent_state
+        global shade_state
+        global duration
+
+        data['states']['stop'] = stop
+        data['states']['vent_state'] = vent_state
+        data['states']['shade_state'] = shade_state
+
+        data['settings']['duration'] = duration
+
+        json.dump(data, file, indent = 4)
+
+def toggle_vent(state):
+    """
+    Toggle physical vent between open and closed
+    """
+    if state > 1:
+        print(f"[ERROR] Invalid state {state}")
+        return
+
+    if state == 0:
+        print("Opening vent...")
+
+    elif state == 1:
+        print("Closing vent...")
+
+def toggle_shade(state):
+    """
+    Toggle physical vent between open and closed
+    """
+    if state > 1:
+        print(f"[ERROR] Invalid state {state}")
+        return
+
+    if state == 0:
+        print("Opening shade...")
+
+    elif state == 1:
+        print("Closing shade...")
 
 
-while True:
-    #Temperature
-    temp = round(sense.get_temperature(), 2)
-    #Humidity
-    hum = round(sense.get_humidity(), 2)
-    #Light
-    light = adc.read(channel = 0)
-    #AirPressure divided by 10 to convert from mBar to kPa
-    pres = round(sense.get_pressure() / 10 , 2) 
+def get_hostname_IP():
+    try:
+        host_name = socket.gethostname()
+        host_ip = socket.gethostbyname(host_name)
+        print("Hostname :  ", host_name)
+        print("IP : ", host_ip)
+    except:
+        print("Unable to get Hostname and IP")
+
+    return [host_name, host_ip]
+
+def process_actions(get_room):
+            """
+            Processes new actions posted to room from front-end by users
+            """
+            actions = get_room.json()['actions']
+
+            global last_action_timestamp
+            global ack
+            global stop
+            global reboot
+            global vent_states
+            global vent_state
+            global shade_states
+            global shade_state
+
+            def setActionToStatus(last_action, status):
+                """
+                Sets last action received in room to status
+                """
+                # Acknowledge action request
+                action_json = {
+                        "id": last_action['id'],
+                        "status": status, #0 - unfulfilled, 1 - queued, 2 - pending, 3 - fulfilled
+                        }
+                print(f"\n action_json: {action_json}\n")
+
+                patch_action = requests.patch(action_url, headers=req_headers, json=action_json, timeout=10)
+                print(patch_action)
+
+            # Obtain last action request to room
+            last_action = actions[-1]
+            # print(last_action)
+            if last_action is not None:
+                # Check if last action was already processed by agent
+                if last_action_timestamp != last_action['timestamp']:
+                    last_action_timestamp = last_action['timestamp']
+                    if last_action['status'] == 0:
+                        print(f'[{datetime.datetime.now()}][ID:{last_action["id"]}][status:{last_action["status"]}][NEW] New action requested at {last_action_timestamp}')
+                        
+                        # Acknowledge action request
+                        setActionToStatus(last_action, 1)
+
+                        # Parse and execute new action request
+                        if last_action['ack'] == 1:
+                            ack = 1
+                            setActionToStatus(last_action, 3)
+                            ack = 0
+
+                        if last_action['stop'] != stop:
+                            stop = last_action['stop']
+                            setActionToStatus(last_action, 3)
+                            update_current_states(config_data)
+
+                        if last_action['reboot'] != reboot:
+                            reboot = last_action['reboot']
+                            setActionToStatus(last_action, 2)
+                            simulate_reboot_pi()
+                            setActionToStatus(last_action, 3)
+
+                        if last_action['vent_state'] != vent_state: # Vent state has changed
+                            if last_action['status'] != 3: # Not moving
+                                simulate_toggle("vent")
+
+                                # Begin action request
+                                setActionToStatus(last_action, 2)
+                                
+                        if last_action['shade_state'] != shade_state: # Shade state has changed
+                            if last_action['status'] != 3: # Not moving
+                                simulate_toggle("shade")
+
+                                # Begin action request
+                                setActionToStatus(last_action, 2)
+
+                else:
+                    print(f'[{datetime.datetime.now()}] Last action requested at {last_action_timestamp}')
+
+            # Current physical states
+            print(f'Vent State: {vent_states[vent_state]},\nShade State: {shade_states[shade_state]},\n')
+            
+            # Other States
+            if stop:
+                print(f'[SYSTEM] STOPPING MEASUREMENTS\n')
+
+            if reboot:
+                print(f'[SYSTEM] REBOOTING SYSTEM\n')
+            print("****************************\n")
+
+def simulate_toggle(device):
+     """
+     Simulates toggling of physical devices e.g. vent, shade, door, etc
+     such that time must elapse in the real world before these devices
+     completely change state
+     """
+
+     toggle_times = {
+          "vent": 8.0,
+          "shade": 12.0
+     }
+
+     if device == "vent":
+        global vent_time
+        global vent_moving
+
+        if not vent_moving: # start moving the vent
+            vent_moving = True
+            vent_time = time()
+            print(f"Started timing {device}\n")
+            return False # vent is not done moving
+        
+        else: # keep moving the vent
+            time_elapsed = time() - vent_time
+            print(f"time elapsed for {device}: {time_elapsed}\n")
+            if time_elapsed > toggle_times[device]:
+                vent_time = 0 # reset vent timer
+                vent_moving = False
+                print(f"[ACTION DONE] {device} took {time_elapsed} seconds to toggle\n")
+                return True # vent is done moving
+            else:
+                return False # vent is not done moving
+     
+     if device =="shade":
+        global shade_time
+        global shade_moving
+
+        if not shade_moving: # start moving the vent
+            shade_moving = True
+            shade_time = time()
+            print(f"Started timing {device}\n")
+            return False # shade is not done moving
+        
+        else: # keep moving the shade
+            time_elapsed = time() - shade_time
+            print(f"time elapsed for {device}: {time_elapsed}\n")
+            if time_elapsed > toggle_times[device]:
+                shade_time = 0 # reset shade timer
+                shade_moving = False
+                print(f"[ACTION DONE] {device} took {time_elapsed} seconds to toggle\n")
+                return True # shade is done moving
+            else:
+                return False # shade is not done moving
+            
+def take_measurements(simulated=True):
+    """
+    Takes measurements and returns data
+    """
+    if simulated:
+        global start_time
+        # Temperature
+        # temp = round(random.random() * 2.0 + 22, 2)
+        elapsed_time_minutes = (time() - start_time) / 60
+        temp = round(1 * math.sin(math.pi * elapsed_time_minutes / 3) + 25, 2) # 3 min period
+        # Humidity
+        hum = round(random.random() * 10 + 35, 2)
+        # Light
+        light= round(random.random() * 5 + 75, 2)
+        # Air Pressure
+        pres = round((random.random() * 5 + 990) / 10, 2)
+
+    else: 
+        global sense
+        global adc
+        temp = round(sense.get_temperature(), 2)
+        hum = round(sense.get_humidity(), 2)
+        light = adc.read(channel = 0)
+        pres = round(sense.get_pressure() / 10, 2)
 
     #Dataset
     dataSet = {'temperature': temp,
                 'humidity': hum,
                 'light': light,
                 'pressure': pres}
+    
+    return dataSet 
+
+if __name__ == "__main__":
+
+    # Create config file if one does not exist
+    if not os.path.exists('agent_config.json'):
+        data = {
+            "settings": {
+                "duration": duration
+            },
+            "states": {
+                "stop": 0,
+                "vent_state": 1,
+                "shade_state": 0,
+                "reboot": 0
+            }
+        }
+        update_current_states(data)
+
+    # Read configuration file and initialize states
+    config_data = read_config()
+
+    # Get host name and ip address
+    host_name, host_IP = get_hostname_IP()
+
+    # Setup loop
+    patch_response = None
+    while not patch_response:
+        try:
+            initialize_states(config_data)
+            patch_response = requests.patch(agent_url, headers=req_headers, json={'device_ip_address': host_IP}, timeout=10)
+            print(patch_response.text)
+        except Exception as e:
+            print(f'Exception occured:\n {str(e)} \nRetrying in {retryTime} seconds...')
+            sleep(retryTime)
+
+    #initializing sensors
+    sense = SenseHat()
+    adc = MCP()
+
+    # Main operation loop
+    while True:
+        print("****************************\n")
+
+        # Update agent status to 'on'
+        try:
+            patch_status = requests.patch(agent_url, headers=req_headers, json={'status': 1}, timeout=10)
 
 
-    post_measurement = requests.post(server_url, headers=req_headers, json=dataSet)
+            if not stop:
+                dataSet = take_measurements(simulated=False)
+                print(dataSet)
 
-    server_data = json.loads(post_measurement.text)
-    sleep(int(server_data["duration"]))
+                post_measurement = requests.post(server_url, headers=req_headers, json=dataSet, timeout=10)
+                # print(post_measurement)
+                print(post_measurement.text)
 
+                server_data = json.loads(post_measurement.text)
+                # print(int(server_data['duration']))
+
+            if server_data is not None:
+                sleep(int(server_data["duration"]))
+                if duration != int(server_data["duration"]): 
+                    duration = int(server_data["duration"])
+            else:
+                sleep(duration)
+
+            # Get data from room
+            get_room = requests.get(f'http://{ServerIP}:5000/rooms/{roomID}', headers=req_headers,timeout=10)
+            # print(get_room.json()['actions'])
+
+            if vent_state < 2:
+                if vent_moving:
+                    done = simulate_toggle("vent")
+                    if done:
+                        vent_state = (vent_state * -1) + 1
+                        post_current_states()
+                        update_current_states(config_data)
+
+            if shade_state < 2:
+                if shade_moving:
+                    done = simulate_toggle("shade")
+                    if done:
+                        shade_state = (shade_state * -1) + 1
+                        post_current_states()
+                        update_current_states(config_data)
+
+            process_actions(get_room)
+        except Exception as e:
+            print(f'Exception occured:\n {str(e)} \nRetrying in {retryTime} seconds...')
+            sleep(retryTime)

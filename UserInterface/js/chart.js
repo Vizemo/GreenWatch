@@ -141,7 +141,7 @@ async function renderMeasurements() {
                   borderWidth: 1
                 },
                 {
-                  label: 'Light (Lux)',
+                  label: 'Light',
                   data: l_data,
                   borderWidth: 1
                 }

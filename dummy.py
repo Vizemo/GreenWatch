@@ -18,7 +18,7 @@ duration = 3
 start_time = time()
 retryTime = 5
 
-private_key = 'HWGD9DTATFG6B8ZCKWAYSN8JZCP1BI5DOBHA9ND3AJ5U604D8UO0CNJZJKD0'
+private_key = 'EJHJDXYOGYR3OPQ5D2OA0CIF6T356UFGMVYG080DZVU76UC05VOIGAVJ8Y9Y'
 
 req_headers = {
     "Key": private_key

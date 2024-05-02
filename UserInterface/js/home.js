@@ -347,7 +347,7 @@ export async function renderRoomCards(intervalId) {
         h_value.textContent = `${room['measurements'][room['measurements'].length-1]['humidity']}`;
         p_row.setAttribute('class', 'd-flex justify-content-between');
         p_label.setAttribute('class', 'h2');
-        p_label.textContent = "Pressure (mBar):";
+        p_label.textContent = "Pressure (kPa):";
         p_value.setAttribute('class', 'h2');
         p_value.setAttribute('id', `p_value${room['id']}`)
         p_value.textContent = `${room['measurements'][room['measurements'].length-1]['pressure']}`;
@@ -754,8 +754,7 @@ async function createFirstServer(local) {
       console.log(`Creating server at ${server_ip}`);
       const serverObj = getCreateServerObject(server_ip);
       await proxy.createServer(serverObj).then(
-        response => {console.log(response);});
-      
+        response => {console.log(response);}); 
     } else {
       server_ip = await proxy.getServerIPByID(1);
       console.log(`Creating server at ${server_ip}`);
@@ -927,7 +926,7 @@ async function switchPowerAliveButton(powerButton, room_id, status)
 }
 
 // Create first server
-const server_ip = await createFirstServer(true);
+const server_ip = await createFirstServer(false);
 
 // Display server ip address on navbar
 displayServerIPAddress(server_ip);

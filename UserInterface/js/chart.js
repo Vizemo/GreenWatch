@@ -17,14 +17,14 @@ exportDataBtn.disabled = true;
 async function renderMeasurements() {
   console.log("Rendering measurements...");
   
-  const startDate = document.getElementById('startDate');
-  const endDate = document.getElementById('endDate');
+  const startDate = document.getElementById('startDate'); //User's Locale
+  const endDate = document.getElementById('endDate'); //User's Locale
   let isDateNull = false;
   let measurements = [];
 
   if (startDate.value == "" || endDate.value == ""){
-    startDate.value = Utils.getCurrentDate();
-    endDate.value = Utils.getCurrentDate();
+    startDate.value = Utils.getCurrentDate().toLocaleString('en-GB', { timeZone: 'UTC' }); 
+    endDate.value = Utils.getCurrentDate().toLocaleString('en-GB', { timeZone: 'UTC' }); ; 
     }
   
 
@@ -43,12 +43,15 @@ async function renderMeasurements() {
 
   // Get measurements for roomID stored in session storage
   if (!isDateNull) {
+    // Convert dates from users locale to 
+
+
     console.log('CHART: getting measurementObj from room ' + roomID)
     await proxy.getMeasurementByRoom(roomID, dateObj).then(response => {
       measurements = response['data'];
     });
     // measurements = measurementsObj['data'];
-    // console.log(measurements);
+    //console.log(measurements);
 
     if (measurements.length) {
       // Enable export data button
@@ -67,6 +70,10 @@ async function renderMeasurements() {
   
       measurements.forEach(measurement => {
         var date = new Date(measurement['timestamp']);
+
+        // Change to central timezone (quick and dirty)
+        date.toLocaleString('en-US', { timeZone: 'America/Chicago' });
+
         const day = date.getUTCDate();
         const month = date.getUTCMonth();
         const hours = date.getUTCHours();

@@ -2,6 +2,20 @@ import { GreenhouseProxy } from "../api/api.js";
 
 const proxy = new GreenhouseProxy();
 
+const servers = await proxy.getServers();
+if (servers.length == 0){
+    // Create default admin user if no servers exist
+    let user = {
+      "username": "admin",
+      "password": "changeme",
+      "is_admin": true,
+      "email": "default@email.com",
+      "first_name": "admin",
+      "last_name": "admin"
+    }
+    proxy.registerUser(user)
+}
+
 /* Dark Mode Logic */
 // Wait for the DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', (event) => {

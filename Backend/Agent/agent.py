@@ -441,7 +441,7 @@ if __name__ == "__main__":
                 sleep(duration)
 
             # Get data from room
-            get_room = requests.get(f'http://{ServerIP}:5000/rooms/{roomID}', headers=req_headers,timeout=10)
+            get_room = requests.get(f'http://{ServerIP}/rooms/{roomID}', headers=req_headers,timeout=10)
             # print(get_room.json()['actions'])
 
             if vent_state < 2:

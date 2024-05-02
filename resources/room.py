@@ -9,7 +9,7 @@ from db import db
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from utilities.rand import rand_string
 from resources.experiment import ExperimentCheck
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import csv
 import json
 import os
@@ -134,7 +134,7 @@ class Measurement(MethodView):
             ExperimentCheck()
 
             measurement = MeasurementModel(**measurement_data)
-            measurement.timestamp = datetime.now()
+            measurement.timestamp = datetime.utcnow() + timedelta(hours=-5)
             measurement.room_id = room_id
 
             active_experiments = [experiment for experiment in room.experiments
@@ -285,7 +285,7 @@ class Action(MethodView):
             ExperimentCheck()
             
             action = ActionModel(**action_data)
-            action.timestamp = datetime.now()
+            action.timestamp = datetime.now(datetime.UTC) + timedelta(hours=-6)
             action.room_id = room_id
             action.status = action_data['status']
             

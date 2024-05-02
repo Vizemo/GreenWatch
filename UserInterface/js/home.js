@@ -774,7 +774,6 @@ function displayServerIPAddress(server_ip) {
   // Display server ip address
   const serverIPText = document.getElementById('server-ip');
   serverIPText.textContent = `GreenWatch: ${server_ip}`;
-  // serverIPText.href = `http://${server_ip}:5000/servers`;
 
   serverIPText.addEventListener('click', async () => {
     
@@ -848,7 +847,7 @@ async function checkRoomAlive(room_id, roomTimeout){
 async function redirectToDownloadCSV(server_ip, room_id) 
 {
   let absoluteURL = 
-    `http://${server_ip}:5000/rooms/${room_id}/measurement/csv`;
+    `http://${server_ip}/rooms/${room_id}/measurement/csv`;
 
   absoluteURL = new URL(absoluteURL);
 

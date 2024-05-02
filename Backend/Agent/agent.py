@@ -24,9 +24,9 @@ server_data = None
 start_time = time()
 retryTime = 5
 
-server_url = f"http://{ServerIP}:5000/rooms/{roomID}/measurement"
-action_url = f"http://{ServerIP}:5000/rooms/{roomID}/action"
-agent_url = f"http://{ServerIP}:5000/servers/agents/{roomID}"
+server_url = f"http://{ServerIP}/rooms/{roomID}/measurement"
+action_url = f"http://{ServerIP}/rooms/{roomID}/action"
+agent_url = f"http://{ServerIP}/servers/agents/{roomID}"
 
 # Actions.
 last_action_timestamp = ''

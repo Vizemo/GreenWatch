@@ -4,6 +4,7 @@ import * as Utils from "../js/utilities.js";
 const proxy = new GreenhouseProxy();
 
 const roomID = sessionStorage.getItem('roomID');
+var measurements = [];
 
 const updateChartButton = document.getElementById('update-chart');
 updateChartButton.addEventListener('click', renderMeasurements);
@@ -12,6 +13,7 @@ const chartSelector = document.getElementById('chart-selector');
 chartSelector.addEventListener('click', renderMeasurements);
 
 const exportDataBtn = document.getElementById('export-data-btn');
+exportDataBtn.addEventListener('click', exportData)
 exportDataBtn.disabled = true;
 
 async function renderMeasurements() {
@@ -20,7 +22,7 @@ async function renderMeasurements() {
   const startDate = document.getElementById('startDate'); //User's Locale
   const endDate = document.getElementById('endDate'); //User's Locale
   let isDateNull = false;
-  let measurements = [];
+  measurements = [];
 
   if (startDate.value == "" || endDate.value == ""){
     startDate.value = Utils.getCurrentDate().toLocaleString('en-GB', { timeZone: 'UTC' }); 
@@ -43,8 +45,6 @@ async function renderMeasurements() {
 
   // Get measurements for roomID stored in session storage
   if (!isDateNull) {
-    // Convert dates from users locale to 
-
 
     console.log('CHART: getting measurementObj from room ' + roomID)
     await proxy.getMeasurementByRoom(roomID, dateObj).then(response => {
@@ -56,11 +56,6 @@ async function renderMeasurements() {
     if (measurements.length) {
       // Enable export data button
       exportDataBtn.disabled = false;
-      exportDataBtn.addEventListener('click', () => {
-        const csvData = Utils.csvMaker(measurements, roomID);
-        console.log(csvData['file_name']);
-        Utils.download(csvData['csv_data'], csvData['file_name']);
-      });
 
       let dates = [];
       let t_data = [];
@@ -220,3 +215,10 @@ renderMeasurements();
 
 // Start the interval to re-render chart
 let intervalId = setInterval(renderMeasurements, 10000);
+
+function exportData(){
+  const csvData = Utils.csvMaker(measurements, roomID);
+  console.log(csvData['file_name']);
+  Utils.download(csvData['csv_data'], csvData['file_name']);
+  exportDataBtn.disabled = true;
+}

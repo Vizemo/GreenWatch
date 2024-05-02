@@ -9,7 +9,7 @@ from db import db
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from utilities.rand import rand_string
 from resources.experiment import ExperimentCheck
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import csv
 import json
 import os
@@ -130,11 +130,10 @@ class Measurement(MethodView):
         print(f"Same Agent Private Key: {same}")
 
         if same:
-
             ExperimentCheck()
 
             measurement = MeasurementModel(**measurement_data)
-            measurement.timestamp = datetime.now()
+            measurement.timestamp = datetime.now(datetime.UTC) + timedelta(hours=-6)
             measurement.room_id = room_id
 
             active_experiments = [experiment for experiment in room.experiments

@@ -313,10 +313,14 @@ async function createUser() {
 
 async function deleteUser() {
   const userID = sessionStorage.getItem('userID');
+  if (userID != 1){
   sessionStorage.removeItem('userID');
 
   await proxy.deleteUser(userID);
   renderUsers();
+  }else{
+    alert("Super Admin (UserId = 1) cannot be deleted!");
+  }
 }
 
 // -------------------- USER MODAL BUTTONS -------------------- //

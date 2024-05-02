@@ -4,7 +4,6 @@ import * as Utils from "../js/utilities.js";
 const proxy = new GreenhouseProxy();
 
 const roomID = sessionStorage.getItem('roomID');
-const measurements = [];
 
 const updateChartButton = document.getElementById('update-chart');
 updateChartButton.addEventListener('click', renderMeasurements);
@@ -13,7 +12,6 @@ const chartSelector = document.getElementById('chart-selector');
 chartSelector.addEventListener('click', renderMeasurements);
 
 const exportDataBtn = document.getElementById('export-data-btn');
-exportDataBtn.addEventListener('click', exportData);
 exportDataBtn.disabled = true;
 
 async function renderMeasurements() {
@@ -22,10 +20,11 @@ async function renderMeasurements() {
   const startDate = document.getElementById('startDate'); //User's Locale
   const endDate = document.getElementById('endDate'); //User's Locale
   let isDateNull = false;
+  let measurements = [];
 
   if (startDate.value == "" || endDate.value == ""){
-    startDate.value = Utils.getCurrentDate(); 
-    endDate.value = Utils.getCurrentDate(); 
+    startDate.value = Utils.getCurrentDate().toLocaleString('en-GB', { timeZone: 'UTC' }); 
+    endDate.value = Utils.getCurrentDate().toLocaleString('en-GB', { timeZone: 'UTC' }); ; 
     }
   
 
@@ -57,6 +56,11 @@ async function renderMeasurements() {
     if (measurements.length) {
       // Enable export data button
       exportDataBtn.disabled = false;
+      exportDataBtn.addEventListener('click', () => {
+        const csvData = Utils.csvMaker(measurements, roomID);
+        console.log(csvData['file_name']);
+        Utils.download(csvData['csv_data'], csvData['file_name']);
+      });
 
       let dates = [];
       let t_data = [];
@@ -66,6 +70,9 @@ async function renderMeasurements() {
   
       measurements.forEach(measurement => {
         var date = new Date(measurement['timestamp']);
+
+        // Change to central timezone (quick and dirty)
+        date.toLocaleString('en-US', { timeZone: 'America/Chicago' });
 
         const day = date.getUTCDate();
         const month = date.getUTCMonth();
@@ -207,18 +214,9 @@ function createPlaceholderChart(key) {
   updateChart(labels, data, key);
 }
 
-function exportData() {
-  const csvData = Utils.csvMaker(measurements, roomID);
-  console.log(csvData['file_name']);
-  Utils.download(csvData['csv_data'], csvData['file_name']);
-  exportDataBtn.disabled = true; //Disabling so user must reselect dates so they dont get confused...
-}
-
 createPlaceholderChart('N/A');
 
 renderMeasurements();
 
 // Start the interval to re-render chart
 let intervalId = setInterval(renderMeasurements, 10000);
-
-

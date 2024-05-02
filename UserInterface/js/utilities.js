@@ -98,7 +98,7 @@ export function download(data, filename) {
 }
 
 // for array of objects
-export function csvMaker(data) {
+export function csvMaker(data, roomID) {
   // Empty array for storing the values
   let csvRows = [];
 
@@ -121,18 +121,18 @@ export function csvMaker(data) {
   // get first and last date to create name of file
   
   let csvData = csvRows.join('\n');
-  const fileName = `${extractDate(data[0]['timestamp'])} - ${extractDate(data[data.length - 1]['timestamp'])}`;
+  const fileName = `${extractDate(data[0]['timestamp'])}_${extractDate(data[data.length - 1]['timestamp'])}_room${roomID}`;
 
   return {csv_data: csvData, file_name: fileName};
 }
 
 function extractDate(date) {
   const dateObj = new Date(date);
-  const day = dateObj.getDate();
-  const month = months[dateObj.getMonth()];
+  const day = ('0' + dateObj.getDate()).slice(-2);
+  const month = ('0' + (dateObj.getMonth() + 1)).slice(-2);;
   const year = dateObj.getFullYear();
 
-  return `${day} ${month}, ${year}`;
+  return `${year}-${month}-${day}`;
 }
 
 export function withTimeout(promise, timeout) {

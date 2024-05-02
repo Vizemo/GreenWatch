@@ -1,9 +1,7 @@
 import * as Utils from "../js/utilities.js";
 
-// var thisFile = document.getElementById('api-script');
+const serverIP = window.location.hostname; // or window.location.origin for protocol and port as well
 
-// const url = thisFile.getAttribute('server_ip');
-// console.log(url)
 const token = `Bearer ${sessionStorage.getItem('access_token')}`;
 let debugMode = false;
 
@@ -479,12 +477,20 @@ export class GreenhouseProxy {
             headers: default_headers
         }
 
+
+        // Because at the current development stage, there will only be 1 server, the server IP is semi hardcoded at the top of api.js
         try {
-            let response = await fetch(`/servers/${server_id}/host`, options);
-            return await response.json();
+            return serverIP;
         } catch (error) {
             console.log(error);
         }   
+
+        // try {
+        //     let response = await fetch(`/servers/${server_id}/host`, options);
+        //     return await response.json();
+        // } catch (error) {
+        //     console.log(error);
+        // }   
     }
     
 

@@ -9,7 +9,7 @@ from db import db
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from utilities.rand import rand_string
 from resources.experiment import ExperimentCheck
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import csv
 import json
 import os
@@ -24,7 +24,7 @@ def admin_check(jwt_obj):
 
 @blp.route("/rooms")
 class Rooms(MethodView):
-    @jwt_required()
+    #@jwt_required()
     @blp.response(200, RoomSchema(many=True))
     def get(self):
         '''
@@ -69,7 +69,7 @@ class Room(MethodView):
         '''
         return RoomModel.query.get_or_404(room_id)
     
-    @jwt_required()
+    #@jwt_required()
     @blp.arguments(RoomUpdateSchema)
     def patch(self, room_data, room_id):
         '''
@@ -134,7 +134,7 @@ class Measurement(MethodView):
             ExperimentCheck()
 
             measurement = MeasurementModel(**measurement_data)
-            measurement.timestamp = datetime.now()
+            measurement.timestamp = datetime.utcnow() + timedelta(hours=-5)
             measurement.room_id = room_id
 
             active_experiments = [experiment for experiment in room.experiments
@@ -165,7 +165,7 @@ class Measurement(MethodView):
         '''
         return MeasurementModel.query.filter_by(room_id=room_id).all()
     
-    @jwt_required()
+    #@jwt_required()
     @blp.arguments(DateRangeSchema)
     def put(self, dates, room_id):
         '''
@@ -285,7 +285,7 @@ class Action(MethodView):
             ExperimentCheck()
             
             action = ActionModel(**action_data)
-            action.timestamp = datetime.now()
+            action.timestamp = datetime.now(datetime.UTC) + timedelta(hours=-6)
             action.room_id = room_id
             action.status = action_data['status']
             
@@ -325,7 +325,7 @@ class Action(MethodView):
 
 @blp.route("/rooms/messages")
 class Messages(MethodView):
-    @jwt_required()
+    #@jwt_required()
     @blp.response(200, MessageSchema(many=True))
     def get(self):
         '''
@@ -340,7 +340,7 @@ class Message(MethodView):
     Used to work with messages in the seperate rooms. 
     Allows notes to be made about experiment progress. 
     '''
-    @jwt_required()
+    #@jwt_required()
     @blp.arguments(MessageSchema)
     def post(self, message_data, room_id):
         '''
@@ -372,7 +372,7 @@ class Message(MethodView):
 
         return {"Success":True, "message_id": new_message.id}, 201
     
-    @jwt_required()
+    #@jwt_required()
     @blp.response(201, MessageSchema(many=True))
     def get(self, room_id):
         '''
@@ -383,7 +383,7 @@ class Message(MethodView):
 
 @blp.route("/rooms/messages/<int:message_id>")
 class SpecificMessage(MethodView):
-    @jwt_required()
+    #@jwt_required()
     def delete(self, message_id):
         '''
         Delete a Message
@@ -395,7 +395,7 @@ class SpecificMessage(MethodView):
 
         return {"Success": True}, 200
     
-    @jwt_required()
+    #@jwt_required()
     @blp.arguments(MessageUpdateSchema)
     def patch(self, message_data, message_id):
         '''

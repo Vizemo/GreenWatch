@@ -1,0 +1,215 @@
+/* Content of Page Styling */
+/* This increases the spacing of the buttons at the top */
+.input-group,
+.col-sm-6 {
+  padding: 2px 2px;
+}
+
+
+/* Fixes the Agent Dropdown below the button */
+#agent-dropdown .dropdown-menu {
+  top: auto;
+  left: auto;
+  bottom: auto;
+}
+
+
+
+/* Slight border gap for easier viewing*/
+.table tr td:nth-child(1) {
+  padding-left: 5px; 
+}
+
+/* This is a light blue color to the element in low column */
+.table tr td:nth-child(2) {
+  color: #5b95d6 !important;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* This is a red color to the element in high column */
+.table tr td:nth-child(3) {
+  color: #ff3c3c !important; 
+  text-align: center;
+  font-weight: bold;
+}
+
+.notes-button {
+  bottom : 10px;
+  right : 10px;
+  position: fixed;
+  z-index: 9999;
+}
+
+.table {
+  border: 1px solid #dee2e6; /* Set a border for the entire table */
+}
+
+.table th,
+.table td {
+  border: 1px solid #dee2e6; /* Set borders for table header cells and table data cells */
+}
+
+
+.fixed-width-label{
+  width: 100px;
+}
+
+.chart-container {
+  position: relative;
+  width: 80vw;
+}
+
+/* Constant button colors with logo */
+.button-color {
+  background-color:#4CAD3C;
+}
+
+
+
+/* Dark Mode */
+.dark-mode {
+  background-color: #343a40; /* Bootstrap dark background */
+  color: #ffffff; /* White text color */
+}
+
+/* Override styles for dark mode */
+.dark-mode .room-card,
+.dark-mode .room-plus-card, 
+.dark-mode .modal-content,
+.dark-mode .list-group-item {
+  background-color: #424242; /* Darker background for cards */
+  color: #dddddd; /* Lighter text for visibility */
+  border-color: #333333; /* Optional: adjust if you have borders */
+}
+
+.dark-mode .form-check-input{
+  background-color: #dddddd;
+}
+
+.dark-mode .room-card:hover,
+.dark-mode .room-plus-card:hover,
+.dark-mode .card {
+  background-color: #535353; /* Slightly lighter background on hover */
+}
+
+/* This changes the title color to white */
+.dark-mode #room-name-text {
+  color: #ffffff !important; 
+}
+
+/* Additional dark mode styles */
+.dark-mode header {
+  background-color: #333333; /* Adjust header background for dark mode */
+  color: white;
+}
+.dark-mode .alive-button-on{
+  background-color: #007E33; /* Adjusted green for better visibility in dark mode */
+}
+
+.dark-mode .form-control,
+.dark-mode .list-group-item{
+  background-color: #333333;
+  border-color: transparent;
+  color: white;
+  font-size: clamp(1rem,50%,2rem);
+}
+
+/* Start section modifier for chart darkmode */
+.dark-mode .chart-container {
+  background-color: #333333; /* Darker background for the chart */
+  border: 1px solid #555555; /* Optional: Adds a slight border around the chart for definition */
+}
+
+.dark-mode .card {
+  background-color: #424242; /* Darker background for cards */
+  color: #dddddd; /* Lighter text for visibility */
+  border-color: #333333; /* Optional: adjust if you have borders */
+}
+
+.dark-mode .card-header, .dark-mode .card-footer {
+  background-color: #333333; /* Even darker shade for headers and footers */
+  color: #ffffff; /* White text for contrast */
+}
+/* end section modifier for chart darkmode */
+
+/* this is to change the border color of the edit button */
+.dark-mode .fa-solid.fa-pen-to-square {
+  color: #ffffff;
+  border-color: #555555;
+}
+
+.dark-mode .card {
+  background-color: #424242; /* Dark background for the card */
+  color: #ffffff; /* Lighter text for readability */
+}
+
+.dark-mode .card-header {
+  background-color: #333333; /* Even darker background for the header */
+  color: #ffffff; /* White text for better contrast */
+}
+
+.dark-mode .form-control {
+  background-color: #333333; /* Dark background for form inputs */
+  color: #ffffff; /* Lighter text for form inputs */
+  border: 1px solid #444444; /* Subtle border for form inputs */
+}
+
+.dark-mode .table {
+  background-color: #333333; /* Dark background for tables */
+  color: #ffffff; /* White text for tables */
+}
+
+/* Defines borders for table cells */
+.dark-mode .table th,
+.dark-mode .table td {
+  border: 1px solid #999999; 
+}
+
+/* Rounding the corners of the experiment table */
+.table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 7px; /* Adjust the radius as needed */
+  overflow: hidden; /* Ensures the content doesn't overflow the rounded corners */
+}
+
+/* Rounding the corners of the experiment table */
+.table tr:first-child th:first-child,
+.table tr:first-child td:first-child {
+  border-top-left-radius: 7px;
+}
+
+/* Rounding the corners of the experiment table */
+.table tr:first-child th:last-child,
+.table tr:first-child td:last-child {
+  border-top-right-radius: 7px;
+}
+
+/* Rounding the corners of the experiment table */
+.table tr:last-child th:first-child,
+.table tr:last-child td:first-child {
+  border-bottom-left-radius: 7px;
+}
+
+/* Rounding the corners of the experiment table */
+.table tr:last-child th:last-child,
+.table tr:last-child td:last-child {
+  border-bottom-right-radius: 7px;
+}
+/* end experiment section modifier for darkmode */
+
+/* Media Queries */
+@media (max-width: 767.98px) {
+  #agent-dropdown .dropdown-menu {
+    top: auto;
+    right: auto;
+  }
+}
+
+/* Adjust height of chart container for smaller screens */
+@media (max-width: 768px) {
+  .chart-container {
+    height: 50vh; /* Adjust as needed */
+  }
+}

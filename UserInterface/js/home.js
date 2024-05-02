@@ -134,8 +134,9 @@ export async function renderRoomCards(intervalId) {
       
       // roomAlive.setAttribute('style', 'color: green');
       card_header.setAttribute('class', 'card-header');
+      card_header.setAttribute('class', 'text-clamp');
       card_body.setAttribute('class', 'row');
-      roomName.setAttribute('class', 'display-3');
+      roomName.setAttribute('class', 'display-3 text-clamp'); // adding text-clamp property to roomName
       roomName.setAttribute('style', 'color: grey');
             
       // Get agent 
@@ -167,7 +168,7 @@ export async function renderRoomCards(intervalId) {
       const stop_button = document.createElement('button');
       const download_button = document.createElement('button');
 
-      download_button.setAttribute("class", "btn btn-success");
+      download_button.setAttribute("class", "btn btn-success button-color");
       download_button.innerHTML =`<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
         <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"></path>
         <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"></path>
@@ -275,8 +276,8 @@ export async function renderRoomCards(intervalId) {
         }
       )
 
-      m_button_row.append(start_button);
-      m_button_row.append(stop_button);
+      //m_button_row.append(start_button);
+      //m_button_row.append(stop_button);
       m_button_row.append(download_button);
       card_body.append(m_button_row);
       
@@ -284,9 +285,9 @@ export async function renderRoomCards(intervalId) {
       const status_label = document.createElement('p');
       const status_value = document.createElement('p');
       status_row.setAttribute('class', 'd-flex justify-content-between');
-      status_label.setAttribute('class', 'h1');
+      status_label.setAttribute('class', 'h2');
       status_label.textContent = "Logging: ";
-      status_value.setAttribute('class', 'h1');
+      status_value.setAttribute('class', 'h2');
       status_value.setAttribute('id', `status_value${room_id}`);
       status_value.textContent = `...`;
       
@@ -302,7 +303,7 @@ export async function renderRoomCards(intervalId) {
         if (isStopped == 0){
           start_button.disabled = true;
           stop_button.disabled = false;
-          status_value.textContent = " Active " + "(" + agents[room_id-1]['duration'] + ")";
+          status_value.textContent = " Active " + "(/" + Utils.timeStringToSeconds(agents[room_id-1]['duration']) + "s)";
           status_value.setAttribute('style', 'color: green');
         }else{
           start_button.disabled = false;
@@ -313,9 +314,9 @@ export async function renderRoomCards(intervalId) {
         // console.log(`stop: ${isStopped}`)
       })
       
-      status_row.append(status_label);
-      status_row.append(status_value);
-      card_body.append(status_row);
+      //status_row.append(status_label);
+      //status_row.append(status_value);
+      //card_body.append(status_row);
       
       if (room['measurements'].length) {
         // Need a label, value, and row for each
@@ -346,7 +347,7 @@ export async function renderRoomCards(intervalId) {
         h_value.textContent = `${room['measurements'][room['measurements'].length-1]['humidity']}`;
         p_row.setAttribute('class', 'd-flex justify-content-between');
         p_label.setAttribute('class', 'h2');
-        p_label.textContent = "Pressure (mBar):";
+        p_label.textContent = "Pressure (kPa):";
         p_value.setAttribute('class', 'h2');
         p_value.setAttribute('id', `p_value${room['id']}`)
         p_value.textContent = `${room['measurements'][room['measurements'].length-1]['pressure']}`;
@@ -429,15 +430,15 @@ export async function renderRoomCards(intervalId) {
         shade_row.append(shade_label);
         shade_row.append(shade_value);
         
-        card_body.append(vent_row);
-        card_body.append(shade_row);
+        //card_body.append(vent_row);
+        //card_body.append(shade_row);
       
       }else{
         const emptyActionsText = document.createElement('div');
         emptyActionsText.textContent = "No Actions Logged";
         emptyActionsText.setAttribute('style', 'color: grey');
 
-        card_body.append(emptyActionsText);
+        //card_body.append(emptyActionsText);
       }
 
       // Create a button element
@@ -543,7 +544,7 @@ export async function renderRoomCards(intervalId) {
         
       button_row.append(vent_button);
       button_row.append(shade_button);
-      card_body.append(button_row);
+      //card_body.append(button_row);
   
       card_header.append(roomAlive);
       card_header.append(roomName);
@@ -627,7 +628,7 @@ export async function renderRoomValues(intervalId) {
       if (isStopped == 0){
         // start_button.disabled = true;
         // stop_button.disabled = false;
-        status_value.textContent = " Active (" + agents[room_id-1]['duration'] +")";
+        status_value.textContent = " Active " + "(/" + Utils.timeStringToSeconds(agents[room_id-1]['duration']) + "s)";
         status_value.setAttribute('style', 'color: green');
       }else{
         // start_button.disabled = false;
@@ -753,10 +754,9 @@ async function createFirstServer(local) {
       console.log(`Creating server at ${server_ip}`);
       const serverObj = getCreateServerObject(server_ip);
       await proxy.createServer(serverObj).then(
-        response => {console.log(response);});
-      
+        response => {console.log(response);}); 
     } else {
-      server_ip = await proxy.getServerIPByID(1)[1];
+      server_ip = await proxy.getServerIPByID(1);
       console.log(`Creating server at ${server_ip}`);
       const serverObj = getCreateServerObject(server_ip);
       await proxy.createServer(serverObj).then(
@@ -772,8 +772,7 @@ async function createFirstServer(local) {
 function displayServerIPAddress(server_ip) {
   // Display server ip address
   const serverIPText = document.getElementById('server-ip');
-  serverIPText.textContent = `Server IPv4 Address: ${server_ip}`;
-  // serverIPText.href = `http://${server_ip}:5000/servers`;
+  serverIPText.textContent = `GreenWatch: ${server_ip}`;
 
   serverIPText.addEventListener('click', async () => {
     
@@ -829,7 +828,7 @@ async function checkRoomAlive(room_id, roomTimeout){
   // console.log("duration: " + agents[room_id-1]['duration']);
 
   // wait 'duration' milliseconds for agent to acknowledge request plus additional second
-  await sleepNow(Utils.timeStringToSeconds(agents[room_id-1]['duration'], 10) * 1000 + 1000); 
+  await sleepNow(Utils.timeStringToSeconds(agents[room_id-1]['duration']) * 1000 + 1000); 
   
   return await checkAckResponse(room_id);
   // try {
@@ -847,7 +846,7 @@ async function checkRoomAlive(room_id, roomTimeout){
 async function redirectToDownloadCSV(server_ip, room_id) 
 {
   let absoluteURL = 
-    `http://${server_ip}:5000/rooms/${room_id}/measurement/csv`;
+    `http://${server_ip}/rooms/${room_id}/measurement/csv`;
 
   absoluteURL = new URL(absoluteURL);
 
@@ -927,7 +926,7 @@ async function switchPowerAliveButton(powerButton, room_id, status)
 }
 
 // Create first server
-const server_ip = await createFirstServer(true);
+const server_ip = await createFirstServer(false);
 
 // Display server ip address on navbar
 displayServerIPAddress(server_ip);

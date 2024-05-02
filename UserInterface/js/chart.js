@@ -4,6 +4,7 @@ import * as Utils from "../js/utilities.js";
 const proxy = new GreenhouseProxy();
 
 const roomID = sessionStorage.getItem('roomID');
+var measurements = [];
 
 const updateChartButton = document.getElementById('update-chart');
 updateChartButton.addEventListener('click', renderMeasurements);
@@ -12,19 +13,20 @@ const chartSelector = document.getElementById('chart-selector');
 chartSelector.addEventListener('click', renderMeasurements);
 
 const exportDataBtn = document.getElementById('export-data-btn');
+exportDataBtn.addEventListener('click', exportData)
 exportDataBtn.disabled = true;
 
 async function renderMeasurements() {
   console.log("Rendering measurements...");
   
-  const startDate = document.getElementById('startDate');
-  const endDate = document.getElementById('endDate');
+  const startDate = document.getElementById('startDate'); //User's Locale
+  const endDate = document.getElementById('endDate'); //User's Locale
   let isDateNull = false;
-  let measurements = [];
+  measurements = [];
 
   if (startDate.value == "" || endDate.value == ""){
-    startDate.value = Utils.getCurrentDate();
-    endDate.value = Utils.getCurrentDate();
+    startDate.value = Utils.getCurrentDate().toLocaleString('en-GB', { timeZone: 'UTC' }); 
+    endDate.value = Utils.getCurrentDate().toLocaleString('en-GB', { timeZone: 'UTC' }); ; 
     }
   
 
@@ -43,22 +45,17 @@ async function renderMeasurements() {
 
   // Get measurements for roomID stored in session storage
   if (!isDateNull) {
+
     console.log('CHART: getting measurementObj from room ' + roomID)
     await proxy.getMeasurementByRoom(roomID, dateObj).then(response => {
       measurements = response['data'];
     });
     // measurements = measurementsObj['data'];
-    // console.log(measurements);
+    //console.log(measurements);
 
     if (measurements.length) {
       // Enable export data button
       exportDataBtn.disabled = false;
-      exportDataBtn.addEventListener('click', () => {
-        const csvData = Utils.csvMaker(measurements);
-        // console.log(csvData);
-
-        Utils.download(csvData['csv_data'], csvData['file_name']);
-      });
 
       let dates = [];
       let t_data = [];
@@ -68,6 +65,10 @@ async function renderMeasurements() {
   
       measurements.forEach(measurement => {
         var date = new Date(measurement['timestamp']);
+
+        // Change to central timezone (quick and dirty)
+        date.toLocaleString('en-US', { timeZone: 'America/Chicago' });
+
         const day = date.getUTCDate();
         const month = date.getUTCMonth();
         const hours = date.getUTCHours();
@@ -94,13 +95,6 @@ async function renderMeasurements() {
         const lightValue = measurement['light'];
         l_data.push(lightValue);
       });
-  
-      // Debug Lines
-      // console.log("Temperature:\n" + t_data);
-      // console.log("Humidity:\n" + h_data);
-      // console.log("Pressure:\n" + p_data);
-      // console.log("Light:\n" + l_data);
-      // console.log("Timestamps:\n" + dates);    
   
       switch(parseInt(chartSelector.value)) {
         case 1: 
@@ -134,17 +128,17 @@ async function renderMeasurements() {
               labels: dates,
               datasets: [
                 {
-                label: 'Temperature',
+                label: 'Temperature (C)',
                 data: t_data,
                 borderWidth: 1
                 },
                 {
-                  label: 'Humidity',
+                  label: 'Humidity (%)',
                   data: h_data,
                   borderWidth: 1
                 },
                 {
-                  label: 'Pressure',
+                  label: 'Pressure (kPa)',
                   data: p_data,
                   borderWidth: 1
                 },
@@ -221,3 +215,10 @@ renderMeasurements();
 
 // Start the interval to re-render chart
 let intervalId = setInterval(renderMeasurements, 10000);
+
+function exportData(){
+  const csvData = Utils.csvMaker(measurements, roomID);
+  console.log(csvData['file_name']);
+  Utils.download(csvData['csv_data'], csvData['file_name']);
+  exportDataBtn.disabled = true;
+}

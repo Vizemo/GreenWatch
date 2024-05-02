@@ -313,10 +313,14 @@ async function createUser() {
 
 async function deleteUser() {
   const userID = sessionStorage.getItem('userID');
+  if (userID != 1){
   sessionStorage.removeItem('userID');
 
   await proxy.deleteUser(userID);
   renderUsers();
+  }else{
+    alert("Super Admin (UserId = 1) cannot be deleted!");
+  }
 }
 
 // -------------------- USER MODAL BUTTONS -------------------- //
@@ -336,6 +340,7 @@ cancelCreateUserButton.addEventListener('click', () => {
 
 const createUserButton = document.getElementById('create-user-button');
 createUserButton.addEventListener('click', createUser);
+
 createUserButton.addEventListener('click', () => {
   document.removeEventListener('keyup', checkCreateUserInputFields);
   document.removeEventListener('mouseup', checkCreateUserInputFields);
@@ -370,24 +375,57 @@ addRoomButton.addEventListener('click', () => {
   document.addEventListener('keyup', checkCreateRoomInputFields);
 });
 
+//cancel create room button actions
 const cancelCreateRoomButton = document.getElementById('create-room-cancel-button');
 cancelCreateRoomButton.addEventListener('click', () => {
   document.removeEventListener('keyup', checkCreateRoomInputFields);
 })
 
-const createRoomButton = document.getElementById('create-room-button');
-createRoomButton.addEventListener('click', createRoom);
+
+// Create Room button Actions
+const createRoomButton = document.getElementById('create-room-button'); 
+
+// Function to be called when 'Enter' is pressed or the button is clicked
+function triggerCreateRoom(event) {
+  if (event.type === 'click' || (event.type === 'keypress' && event.key === 'Enter')) {
+    
+        const room = getCreateRoomObject();
+        // window.alert(isCreateRoomInputFieldsEmpty(room)); //shows if room is empty
+        if (event.key === 'Enter' && isCreateRoomInputFieldsEmpty(room) === false) {
+          createRoom();
+        } else if(event.type === 'click' && isCreateRoomInputFieldsEmpty(room) === false){
+          createRoom();
+          
+        }
+    
+    event.preventDefault(); // Prevent default form submission behavior
+  }
+
+}
+
+
+//get 'create-room-name and check if the keypress is active
+document.getElementById('create-room-name').addEventListener('keypress', triggerCreateRoom);
+document.getElementById('create-room-button').addEventListener('click', triggerCreateRoom);
+
+
+
+
+
+// Removing the keyup event listener if it's no longer needed
 createRoomButton.addEventListener('click', () => {
   document.removeEventListener('keyup', checkCreateRoomInputFields);
 });
-// createRoomButton.addEventListener('click', renderRoomCards); 
 
+
+// event listener (actions) for when canceling edit room 
 const cancelEditRoomButton = document.getElementById('edit-room-cancel-button');
 cancelEditRoomButton.addEventListener('click', () => {
   document.removeEventListener('keyup', checkEditRoomInputFields);
   sessionStorage.removeItem('room');
 });
 
+// actions to edit room (event listeners)
 const editRoomButton = document.getElementById('edit-room-button');
 editRoomButton.addEventListener('click', () => {
   document.removeEventListener('keyup', checkEditRoomInputFields);
@@ -507,7 +545,7 @@ function checkCreateRoomInputFields() {
 
 // Returns the values of each input tag for create room as an object
 function getCreateRoomObject() {
-  const greenhouseID = document.getElementById('create-greenhouse-id');
+  // const greenhouseID = document.getElementById('create-greenhouse-id');
   const name = document.getElementById('create-room-name');
 
   const room = {

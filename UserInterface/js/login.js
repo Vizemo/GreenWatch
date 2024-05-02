@@ -2,6 +2,49 @@ import { GreenhouseProxy } from "../api/api.js";
 
 const proxy = new GreenhouseProxy();
 
+const servers = await proxy.getServers();
+if (servers.length == 0){
+    // Create default admin user if no servers exist
+    let user = {
+      "username": "admin",
+      "password": "changeme",
+      "is_admin": true,
+      "email": "default@email.com",
+      "first_name": "admin",
+      "last_name": "admin"
+    }
+    proxy.registerUser(user)
+}
+
+/* Dark Mode Logic */
+// Wait for the DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', (event) => {
+  const darkModeSwitch = document.getElementById('darkModeSwitch');
+
+  // Check if the user has a preference stored in localStorage
+  const isDarkMode = localStorage.getItem('darkMode') === "true";
+
+  // Apply the stored preference
+  darkModeSwitch.checked = isDarkMode;
+  if (isDarkMode) {
+    document.body.classList.add('dark-mode');
+  }
+
+  // Listen for changes to the toggle switch
+  darkModeSwitch.addEventListener('change', () => {
+    if (darkModeSwitch.checked) {
+      // Activate dark mode and store the preference
+      document.body.classList.add('dark-mode');
+      localStorage.setItem('darkMode', 'true');
+    } else {
+      // Deactivate dark mode and store the preference
+      document.body.classList.remove('dark-mode');
+      localStorage.setItem('darkMode', 'false');
+    }
+    renderRoomCards();
+  });
+});
+
 const submitBtn = document.getElementById('submit-btn');
 submitBtn.addEventListener('click', validateUser);
 

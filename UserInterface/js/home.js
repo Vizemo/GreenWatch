@@ -276,8 +276,8 @@ export async function renderRoomCards(intervalId) {
         }
       )
 
-      m_button_row.append(start_button);
-      m_button_row.append(stop_button);
+      //m_button_row.append(start_button);
+      //m_button_row.append(stop_button);
       m_button_row.append(download_button);
       card_body.append(m_button_row);
       
@@ -314,9 +314,9 @@ export async function renderRoomCards(intervalId) {
         // console.log(`stop: ${isStopped}`)
       })
       
-      status_row.append(status_label);
-      status_row.append(status_value);
-      card_body.append(status_row);
+      //status_row.append(status_label);
+      //status_row.append(status_value);
+      //card_body.append(status_row);
       
       if (room['measurements'].length) {
         // Need a label, value, and row for each
@@ -430,15 +430,15 @@ export async function renderRoomCards(intervalId) {
         shade_row.append(shade_label);
         shade_row.append(shade_value);
         
-        card_body.append(vent_row);
-        card_body.append(shade_row);
+        //card_body.append(vent_row);
+        //card_body.append(shade_row);
       
       }else{
         const emptyActionsText = document.createElement('div');
         emptyActionsText.textContent = "No Actions Logged";
         emptyActionsText.setAttribute('style', 'color: grey');
 
-        card_body.append(emptyActionsText);
+        //card_body.append(emptyActionsText);
       }
 
       // Create a button element
@@ -544,7 +544,7 @@ export async function renderRoomCards(intervalId) {
         
       button_row.append(vent_button);
       button_row.append(shade_button);
-      card_body.append(button_row);
+      //card_body.append(button_row);
   
       card_header.append(roomAlive);
       card_header.append(roomName);

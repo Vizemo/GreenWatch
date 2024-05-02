@@ -47,7 +47,7 @@ async function createAgent() {
   const jwt = Utils.getJwt();
   const userID = jwt['user_id'];
 
-  const agentObj = getCreateAgentObject();
+  const agentObj = getCreateAgentObject(server_ip);
   // Create agent in database
   await proxy.createAgent(agentObj);
 
@@ -86,11 +86,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
   });
 });
 
-function getCreateAgentObject() {
+function getCreateAgentObject(server_ip) {
 
   const agent = {
     "duration": "00:00:03.000000",
-    "ip_address": "127.0.0.1",
+    "ip_address": server_ip,
     "status": 0,
     "room_id": roomID,
     "server_id": 1
@@ -102,7 +102,7 @@ function getCreateAgentObject() {
 // Function to redirect to a relative URL
 function redirectToDownloadAgent(server_ip)
 {
-  let absoluteURL = `http://${server_ip}:5000/servers/agents/${roomID}`;
+  let absoluteURL = `http://${server_ip}/servers/agents/${roomID}`;
 
   absoluteURL = new URL(absoluteURL);
 

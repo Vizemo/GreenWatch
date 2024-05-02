@@ -757,7 +757,7 @@ async function createFirstServer(local) {
         response => {console.log(response);});
       
     } else {
-      server_ip = await proxy.getServerIPByID(1)[1];
+      server_ip = await proxy.getServerIPByID(1);
       console.log(`Creating server at ${server_ip}`);
       const serverObj = getCreateServerObject(server_ip);
       await proxy.createServer(serverObj).then(

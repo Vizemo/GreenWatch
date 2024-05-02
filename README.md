@@ -8,20 +8,30 @@
 
 To provide a way to measure and record environmental data in a greenhouse and
 be able to present that data in a meaningful web application that allows for 
-insightful interpretation of the data. The projects first iteration was to implement
+insightful interpretation of the data. While working on the second iteration our goal was to implement
 a web application that displays four primary units of measurement: temperature, humidity, pressure
-and light. As well as configuring and putting together the rasberry PIs for each individual
-room in the greenhouse, building scripts to send measurement data to the backend server, etc.  
-Future iterations may include controlling function within the opening of shades
-or even changing the temperature of the greenhouse itself.
+and light. As well updating the user interface to look more modern, editing existing code to send measurement data to the backend server, etc.  
+While we have created the ability for actions such as opening shades and vents, possible future iterations may include implementing actual funtionality with the actions.
   
 ## Documentation
 
-Within the [Docs](https://github.com/gramcracker40/GreenWatch/tree/main/docs) folder is a collection of the
-Greenwatch's project documentation including various UML diagrams as well as other documents that were used for the development of the project itself.
+Within the [Docs](https://github.com/Vizemo/GreenWatch/tree/production/Documentation) folder is a collection of the
+Greenwatch's project documentation including a extensive user manual for all things `GreenWatchv2`. 
 Reference this folder for any questions you have about the purpose, architecture, or 
 even the code itself. 
 
+
+## Version Control Workflow
+
+In order to keep workflow the same, the next user may want to note that there are several different
+branches. In order to keep past working versions to work create your own branch. For example, creating
+your own develop branch should be the first step in order to start coding `yourname-develop`. Note that 
+if you modify the original branch it may cause more issues than it solves. 
+
+Our workflow was structured as follows, final product is merged to production, if no final product exist
+this means you are in the development process. If this is the case each "developer" should create their 
+own develop branch (as seen in the paragraph above). When changes have been made and are successful everyone 
+should merge their personal branch with the communal develop branch labeled `develop`. 
 
 ## Setup - Just Python with SQLite
 
@@ -30,8 +40,9 @@ you need is a machine with python 3.6 or higher and pip installed as the primary
 package manager. Also, you will want to use git to clone the repo and follow the below steps.
 
 1. clone the repo into a directory of your choice and tunnel into the root of the project  
-2. git clone https://github.com/gramcracker40/GreenWatch.git  
+2. git clone https://github.com/Vizemo/GreenWatch.git   
 3. cd GreenWatch
+
 
 if you would like to do it with a virtual environment build it now and activate
   pip install virtualenv
@@ -89,27 +100,27 @@ thirdly, the nginx web server running on port 80
   
 ## User Interface
   
-The [UserInterface](https://github.com/gramcracker40/GreenWatch/tree/main/UserInterface) folder includes all of the static html files, the javascript files that    
+The [UserInterface](https://github.com/Vizemo/GreenWatch/tree/production/UserInterface) folder includes all of the static html files, the javascript files that    
 manipulate DOM to create dynamic html files, and the css files that style the login page. There are also javascript utility scripts that include    
 functions that are   repeatedly used accross multiple files. The javascript files making the API fetch requests are also stored within the [UserInterface]    
-(https://github.com/gramcracker40/GreenWatch/tree/main/UserInterface) folder.  
+(https://github.com/Vizemo/GreenWatch/tree/production/UserInterface) folder.  
 
 ## Backend  
   
-[Backend](https://github.com/gramcracker40/GreenWatch/tree/main/Backend) Contains the code of the [Agents]   
-(https://github.com/gramcracker40/GreenWatch/tree/main/Backend/Agents), that run on the Raspberry Pi to take sensor data, and the [GreenhouseServer]  
-(https://github.com/gramcracker40/GreenWatch/tree/main/Backend/GreenhouseServer) that acts as a proxy to push the agent data from the greenhouse to  
+[Backend](https://github.com/Vizemo/GreenWatch/tree/production/Backend) Contains the code of the [Agents]   
+(https://github.com/Vizemo/GreenWatch/tree/production/Backend/Agent), that run on the Raspberry Pi to take sensor data, and the [GreenhouseServer]  
+(https://github.com/Vizemo/GreenWatch/tree/production/Backend/GreenhouseServer) that acts as a proxy to push the agent data from the greenhouse to  
 whatever remote server is running the Greenwatch application.  
   
-## Hardware  
-[Hardware](https://github.com/gramcracker40/GreenWatch/tree/main/Hardware) Contains information about the hardware used to take  
-the measurement data and any setup processes we used to get them to where they needed to be in order to work with Greenwatch.   
-
 
 ## Contributors  
+As a team we all worked on code and documentation equally, while also leaning into eachothers strengths. It should
+be noted that we also tackled problems outside of our set of skills in order to broaden our skill base. Lastly all team
+members worked on documentation.
 
-- [Garrett Mathers](https://github.com/gramcracker40): Project Lead & Backend  
-- [Kolten Pulliam](https://github.com/klpulliam-37): Frontend & API  
-- [Derrick Pollock](https://github.com/derrk): Frontend & GUI  
-- [Edwin Mondragon](https://github.com/Takaximos): Hardware  
-- [June Portillo](https://github.com/BastionWolf): Misc.  
+Each team members skills will be listed next to their names. 
+
+- [Calvin Walmer](https://github.com/CalvinWalmer) `Engineering/Backend/Leadership`
+- [Sharome Burton](https://github.com/koulkoudakis) `Engineering/Backend`
+- [Victor Marchesi](https://github.com/Vizemo)  `Deployment/General Coding`
+- [Delton Hughes](https://github.com/dHughes97) `Front-End/UX Design`
